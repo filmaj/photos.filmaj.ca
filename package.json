@@ -1,0 +1,19 @@
+{
+  "name": "photos.filmaj.ca",
+  "version": "0.0.1",
+  "description": "mah own purty picture archive",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "aws",
+    "architect",
+    "photos"
+  ],
+  "author": "Filip Maj",
+  "license": "MIT",
+  "dependencies": {
+    "@architect/architect": "9.5.4"
+  }
+}
