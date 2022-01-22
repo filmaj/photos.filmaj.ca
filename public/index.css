@@ -1,0 +1,28 @@
+h1#main-heading { text-align: center; }
+img { max-width: 100% }
+#gallery {
+  margin: 0 auto;
+  padding: 5px;
+  max-width: 80%;
+  line-height: 0;
+  column-count: 4;
+  column-gap: 0px;
+}
+#gallery img {
+  width: 100%;
+  height: auto;
+}
+.gallery {
+  /*
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+  */
+}
+.shot-details {
+  display: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.img-comment { margin: 0; display: none;}
