@@ -6,6 +6,7 @@ profile default
 region us-east-1
 
 @http
+get /
 get /*
 
 @static

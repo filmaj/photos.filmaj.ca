@@ -1,5 +1,4 @@
 h1#main-heading { text-align: center; }
-img { max-width: 100% }
 #gallery {
   margin: 0 auto;
   padding: 5px;
@@ -12,17 +11,12 @@ img { max-width: 100% }
   width: 100%;
   height: auto;
 }
-.gallery {
-  /*
-  display: flex;
-  flex-direction: column;
-  margin: 10px 0;
-  */
+.img-detail {
+  display: grid;
+  height: 100%;
 }
-.shot-details {
-  display: none;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.img-detail > img {
+  max-width: 100%;
+  max-height: 100vh;
+  margin: auto;
 }
-.img-comment { margin: 0; display: none;}
