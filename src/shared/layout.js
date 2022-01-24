@@ -16,8 +16,7 @@ module.exports = function layout({ title, body, req, scripts }) {
   <title>${title}</title>
   <link rel="stylesheet" href="${arc.static('index.css')}" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GPE1GXNEM5"></script>
-  ${(process.env.ARC_ENV === 'production' ? '<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "G-GPE1GXNEM5");</script>' : '')}
+  ${(process.env.ARC_ENV === 'production' ? '<script async src="https://www.googletagmanager.com/gtag/js?id=G-GPE1GXNEM5"></script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "G-GPE1GXNEM5");</script>' : '')}
 </head>
 <body>
 ${body}
