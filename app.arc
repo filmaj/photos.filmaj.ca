@@ -7,6 +7,7 @@ region us-east-1
 
 @http
 get /
+get /api/randoimg
 get /*
 
 @static

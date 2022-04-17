@@ -1,5 +1,3 @@
-let { toLogicalID } = require('@architect/utils');
-
 module.exports = {
   package: function storage ({ cloudformation: cfn }) {
     console.log('inside storage plugin');
@@ -26,7 +24,7 @@ module.exports = {
     // Add PHOTO_BUCKET env var with bucket name to all lambdas
     resKeys.forEach((k) => {
       if (cfn.Resources[k].Type === 'AWS::Serverless::Function') {
-        cfn.Resources[k].Properties.Environment.Variables[`PHOTO_BUCKET`] = bucket;
+        cfn.Resources[k].Properties.Environment.Variables['PHOTO_BUCKET'] = bucket;
       }
     });
 

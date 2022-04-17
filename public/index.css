@@ -1,15 +1,57 @@
+html, body {
+  font-family: 'Source Serif Pro', serif;
+  color: rgba(0, 0, 0, 0.8);
+  background-color: #FBF5F0;
+}
+h1 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.75em;
+  line-height: 1.25em;
+}
+h2 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.5em;
+  line-height: 1.25em;
+}
+body {
+  font-size: 100%;
+  line-height: 1.56em;
+}
+i.material-icons {
+  position: relative;
+  top: 3px;
+}
+a[href] {
+  transition: all 0.2s ease;
+  color: #E5625E;
+  text-decoration: none;
+}
+a[href]:hover {
+  text-decoration: underline;
+  color: #890620;
+}
+
 h1#main-heading { text-align: center; }
 #gallery {
+  list-style-type: none;
   margin: 0 auto;
   padding: 5px;
   max-width: 80%;
-  line-height: 0;
-  column-count: 4;
-  column-gap: 0px;
+  display: flex;
+  flex-wrap: wrap;
+}
+#gallery > li {
+  height: 40vh;
+  flex-grow: 1;
+}
+#gallery > li:last-child {
+  flex-grow: 10;
 }
 #gallery img {
-  width: 100%;
-  height: auto;
+  max-height: 100%;
+  min-width: 100%;
+  object-fit: cover;
+  vertical-align: bottom;
 }
 .img-detail {
   display: grid;
