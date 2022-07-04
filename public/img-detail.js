@@ -2,10 +2,13 @@ function getExif() {
   let img = document.getElementsByClassName('img-detail')[0].children[0];
   let comment = document.getElementsByClassName('comment')[0];
   let details = document.getElementsByClassName('shot-details')[0];
+  let settings = document.getElementsByClassName('img-setting')[0];
+  let data = document.getElementsByClassName('img-data')[0];
   EXIF.getData(img, function() {
     let tags = EXIF.getAllTags(this);
+    data.style.maxWidth=img.width + 'px';
     let date = dayjs(`${tags.DateTime} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
-    let dateEl = details.getElementsByClassName('date')[0];
+    let dateEl = settings.getElementsByClassName('date')[0];
     let timestamp = date.unix();
     dateEl.setAttribute('timestamp', timestamp);
     details.getElementsByClassName('camera')[0].innerHTML = `${tags.Model}`;
@@ -23,7 +26,7 @@ function getExif() {
     if (tags.GPSLongitudeRef === 'W') lon = lon * -1;
     let timezone = tzlookup(lat, lon);
     let zonedDate = date.tz(timezone);
-    let displayDate = `${zonedDate.format('LLL')}<br/>${date.fromNow()}`;
+    let displayDate = `${zonedDate.format('LL')}<br/>${date.fromNow()}`;
     dateEl.innerHTML = displayDate;
     console.log(tags.DateTime, tags);
   });

@@ -21,7 +21,35 @@ async function getAlbumOrPhoto (req) {
     let albumLink = `/${album}`;
     images = `<a href="${albumLink}"><h2>⬅️ ${album}</h2></a>`;
     images += `<div class="img-detail"><img src="${imgBase}${req.path}" /></div>`;
-    images += '<div class="img-data"><p class="comment"></p><div class="shot-details"><span class="date"></span><span class="camera"></span><span class="iso"></span><span class="focal"></span><span class="fstop"></span><span class="exposure"></span></div></div>';
+    images += `
+<div class="img-data">
+  <div class="img-setting">
+    <div class="comment"></div>
+    <div class="date"></div>
+  </div>
+  <div class="shot-details">
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">photo_camera</span>
+      <span class="camera"></span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">theaters</span>
+      <span class="iso"></span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">filter_tilt_shift</span>
+      <span class="focal"></span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">camera</span>
+      <span class="fstop"></span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">shutter_speed</span>
+      <span class="exposure"></span>
+    </div>
+  </div>
+</div>`;
     scripts = ['img-detail.js', 'tz.js'];
   } else {
     // album view

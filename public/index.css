@@ -30,8 +30,12 @@ a[href]:hover {
   text-decoration: underline;
   color: #890620;
 }
+.flex { display: flex; }
 
 h1#main-heading { text-align: center; }
+
+/* Image Gallery */
+
 #gallery {
   list-style-type: none;
   margin: 0 auto;
@@ -53,6 +57,9 @@ h1#main-heading { text-align: center; }
   object-fit: cover;
   vertical-align: bottom;
 }
+
+/* Image Detail */
+
 .img-detail {
   display: grid;
   height: 100%;
@@ -61,4 +68,23 @@ h1#main-heading { text-align: center; }
   max-width: 100%;
   max-height: 100vh;
   margin: auto;
+}
+.img-setting {
+  display: flex;
+  justify-content: space-between;
+}
+.img-setting > div {
+  margin: 0.5em 0.25em;
+}
+.img-data {
+  margin: 0 auto;
+}
+.shot-details {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.shot-details > div {
+  align-items: center;
+  margin: 0.5em 0.25em;
 }

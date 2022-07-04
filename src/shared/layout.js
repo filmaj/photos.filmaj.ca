@@ -20,7 +20,7 @@ module.exports = function layout({ title, body, req, scripts }) {
 </head>
 <body>
 ${body}
-${(process.env.ARC_ENV === 'staging' ? '<pre><code>' + JSON.stringify(req, null, 2) + '</code></pre>' : '')}
+${(process.env.ARC_ENV === 'staging' ? '<pre style="display:none;"><code>' + JSON.stringify(req, null, 2) + '</code></pre>' : '')}
 </body>
 <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/dayjs.min.js" integrity="sha512-bwD3VD/j6ypSSnyjuaURidZksoVx3L1RPvTkleC48SbHCZsemT3VKMD39KknPnH728LLXVMTisESIBOAb5/W0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -30,7 +30,7 @@ ${(process.env.ARC_ENV === 'staging' ? '<pre><code>' + JSON.stringify(req, null,
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/utc.min.js" integrity="sha512-TU4ndEYOqql+pMXn14M8RDWsjjD+VPUA2RoWSuuFd+blPJW4oLrL1w1zAGdlrk4jsE2FEBH5CU3+fmogVYEqIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/timezone.min.js" integrity="sha512-72V2JNSAxd3rsQIpDSAbCTQXD6gi91Cd/IFZ6NYwRjZSiIlIJfDrJLXq+UomWstOg+zGHWFfkTDl3APEUMoqlw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">dayjs.extend(dayjs_plugin_customParseFormat);dayjs.extend(dayjs_plugin_relativeTime);dayjs.extend(dayjs_plugin_localizedFormat);dayjs.extend(dayjs_plugin_utc);dayjs.extend(dayjs_plugin_timezone);</script>
-${scripts.map(src => `<script type="text/javascript" src="${arc.static(src)}"></script>`)}
+${scripts.map(src => `<script type="text/javascript" src="${arc.static(src)}"></script>`).join('\n')}
 </html>
 `
   };
