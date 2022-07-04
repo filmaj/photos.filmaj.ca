@@ -15,7 +15,7 @@ module.exports = function layout({ title, body, req, scripts }) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title}</title>
   <link rel="stylesheet" href="${arc.static('index.css')}" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
   ${(process.env.ARC_ENV === 'production' ? '<script async src="https://www.googletagmanager.com/gtag/js?id=G-GPE1GXNEM5"></script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "G-GPE1GXNEM5");</script>' : '')}
 </head>
 <body>
@@ -29,7 +29,20 @@ ${(process.env.ARC_ENV === 'staging' ? '<pre style="display:none;"><code>' + JSO
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/localizedFormat.min.js" integrity="sha512-webaelc41/yR5a3vWQMwU1o6nqNPlwiiF9T4UfUJjGb/+jTHvpd7Xbj1d4IkHTxrjOnrl04W2D6ytruI9NNWhw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/utc.min.js" integrity="sha512-TU4ndEYOqql+pMXn14M8RDWsjjD+VPUA2RoWSuuFd+blPJW4oLrL1w1zAGdlrk4jsE2FEBH5CU3+fmogVYEqIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/timezone.min.js" integrity="sha512-72V2JNSAxd3rsQIpDSAbCTQXD6gi91Cd/IFZ6NYwRjZSiIlIJfDrJLXq+UomWstOg+zGHWFfkTDl3APEUMoqlw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script type="text/javascript">dayjs.extend(dayjs_plugin_customParseFormat);dayjs.extend(dayjs_plugin_relativeTime);dayjs.extend(dayjs_plugin_localizedFormat);dayjs.extend(dayjs_plugin_utc);dayjs.extend(dayjs_plugin_timezone);</script>
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
+<script type="text/javascript">dayjs.extend(dayjs_plugin_customParseFormat);dayjs.extend(dayjs_plugin_relativeTime);dayjs.extend(dayjs_plugin_localizedFormat);dayjs.extend(dayjs_plugin_utc);dayjs.extend(dayjs_plugin_timezone);
+WebFontConfig = {
+    google: { families: [ 'Source Sans Pro:Semi-Bold', 'Source Serif Pro:Regular', 'Material+Icons' ] }
+};
+(function() {
+  var s = document.getElementsByTagName('script')[0];
+  var wf = document.createElement('script');
+  wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+  '://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+  wf.type = 'text/javascript'; wf.async = 'true';
+  s.parentNode.insertBefore(wf, s);
+})();
+</script>
 ${scripts.map(src => `<script type="text/javascript" src="${arc.static(src)}"></script>`).join('\n')}
 </html>
 `

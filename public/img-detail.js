@@ -28,7 +28,12 @@ function getExif() {
     let zonedDate = date.tz(timezone);
     let displayDate = `${zonedDate.format('LL')}<br/>${date.fromNow()}`;
     dateEl.innerHTML = displayDate;
-    console.log(tags.DateTime, tags);
+    console.log(tags.DateTime, lat, lon, tags);
+    let map = L.map('map').setView([lat, lon], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
   });
 }
 window.onload=getExif;

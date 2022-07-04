@@ -17,10 +17,6 @@ body {
   font-size: 100%;
   line-height: 1.56em;
 }
-i.material-icons {
-  position: relative;
-  top: 3px;
-}
 a[href] {
   transition: all 0.2s ease;
   color: #E5625E;
@@ -57,6 +53,18 @@ h1#main-heading { text-align: center; }
   object-fit: cover;
   vertical-align: bottom;
 }
+@media (min-width: 320px) and (max-width: 600px) {
+  #gallery {
+    max-width: 100%;
+  }
+  #gallery > li {
+    height: auto;
+  }
+  #gallery img {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
 
 /* Image Detail */
 
@@ -76,6 +84,9 @@ h1#main-heading { text-align: center; }
 .img-setting > div {
   margin: 0.5em 0.25em;
 }
+.img-setting .date {
+  white-space: nowrap;
+}
 .img-data {
   margin: 0 auto;
 }
@@ -87,4 +98,7 @@ h1#main-heading { text-align: center; }
 .shot-details > div {
   align-items: center;
   margin: 0.5em 0.25em;
+}
+#map {
+  height: 150px;
 }

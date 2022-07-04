@@ -49,6 +49,7 @@ async function getAlbumOrPhoto (req) {
       <span class="exposure"></span>
     </div>
   </div>
+  <div id="map"></div>
 </div>`;
     scripts = ['img-detail.js', 'tz.js'];
   } else {
@@ -56,11 +57,13 @@ async function getAlbumOrPhoto (req) {
     let album = req.path.substring(1);
     if (album[album.length - 1] !== '/') album = `${album}/`; // needs trailing slashes
     listOptions = { Bucket, Delimiter, Prefix: album, StartAfter: album };
+    console.log(listOptions);
     let idx = album.lastIndexOf('-');
     let date = album.substring(0, idx);
     let albumTitle = album.substring(idx, album.length - 1).replace(/-/g, ' ');
     title = `${albumTitle}, ${date}`;
     keys = await s3.listObjectsV2(listOptions).promise();
+    console.log(keys);
     if (keys.Contents.length) {
       // list pictures inside albums
       images = keys.Contents.map(k => {
