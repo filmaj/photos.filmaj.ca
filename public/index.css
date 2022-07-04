@@ -18,27 +18,24 @@ body {
   line-height: 1.56em;
 }
 a[href] {
-  transition: all 0.2s ease;
   color: #E5625E;
   text-decoration: none;
-}
-a[href]:hover {
-  text-decoration: underline;
-  color: #890620;
 }
 .flex { display: flex; }
 
 h1#main-heading { text-align: center; }
 
 /* Image Gallery */
-
-#gallery {
-  list-style-type: none;
+#gallery-container {
   margin: 0 auto;
   padding: 5px;
   max-width: 80%;
+}
+#gallery {
+  list-style-type: none;
   display: flex;
   flex-wrap: wrap;
+  padding-inline-start: 0;
 }
 #gallery > li {
   height: 40vh;
@@ -54,7 +51,7 @@ h1#main-heading { text-align: center; }
   vertical-align: bottom;
 }
 @media (min-width: 320px) and (max-width: 600px) {
-  #gallery {
+  #gallery-container {
     max-width: 100%;
   }
   #gallery > li {

@@ -19,7 +19,7 @@ async function getAlbumOrPhoto (req) {
     title = req.path.substring(1);
     let album = title.split('/')[0];
     let albumLink = `/${album}`;
-    images = `<a href="${albumLink}"><h2>⬅️ ${album}</h2></a>`;
+    images = `<a href="${albumLink}"><h2><span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_library</span>${album}</h2></a>`;
     images += `<div class="img-detail"><img src="${imgBase}${req.path}" /></div>`;
     images += `
 <div class="img-data">
@@ -57,13 +57,11 @@ async function getAlbumOrPhoto (req) {
     let album = req.path.substring(1);
     if (album[album.length - 1] !== '/') album = `${album}/`; // needs trailing slashes
     listOptions = { Bucket, Delimiter, Prefix: album, StartAfter: album };
-    console.log(listOptions);
     let idx = album.lastIndexOf('-');
     let date = album.substring(0, idx);
     let albumTitle = album.substring(idx, album.length - 1).replace(/-/g, ' ');
     title = `${albumTitle}, ${date}`;
     keys = await s3.listObjectsV2(listOptions).promise();
-    console.log(keys);
     if (keys.Contents.length) {
       // list pictures inside albums
       images = keys.Contents.map(k => {
@@ -74,7 +72,7 @@ async function getAlbumOrPhoto (req) {
       // no pics :(
       images = '<div id="gallery">No pictures in this album :(</div>';
     }
-    images = `<h1 id="main-heading">${title}</h1><h2><a href="/">⬅️ Home</a></h2>${images}`;
+    images = `<div id="gallery-container"><h1 id="main-heading"><a href="/" style="float:left;text-decoration:none;"><span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_album</span></a>${title}</h1>${images}</div>`;
   }
   return layout({ title, body: images, scripts, req });
 }
