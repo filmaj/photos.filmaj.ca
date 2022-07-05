@@ -19,8 +19,16 @@ async function getAlbumOrPhoto (req) {
     title = req.path.substring(1);
     let album = title.split('/')[0];
     let albumLink = `/${album}`;
-    images = `<a href="${albumLink}"><h2><span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_library</span>${album}</h2></a>`;
-    images += `<div class="img-detail"><img src="${imgBase}${req.path}" /></div>`;
+    let filename = title.split('/')[1];
+    let fileNumber = parseInt(filename.split('_')[1].split('.')[0], 10);
+    let filePrefix = filename.split('_')[0];
+    let fileExt = filename.split('.')[1];
+    let before = fileNumber - 1;
+    let beforeLink = `${albumLink}/${filePrefix}_${String(before).padStart(4, '0')}.${fileExt}`;
+    let after = fileNumber + 1;
+    let afterLink = `${albumLink}/${filePrefix}_${String(after).padStart(4, '0')}.${fileExt}`;
+    images = `<div id="detail-container"><a href="${albumLink}"><h2><span class="material-icons material-symbols-sharp" style="position:relative;top:3px;float:left;">photo_library</span>${album}</h2></a>`;
+    images += `<div class="img-detail"><a id="left-arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}"><span class="material-icons material-symbols-sharp">navigate_before</span></a><img src="${imgBase}${req.path}" onerror="imgError(this)" /><a id="right-arrow" href="${afterLink}"><span class="material-icons material-symbols-sharp">navigate_next</span></a></div>`;
     images += `
 <div class="img-data">
   <div class="img-setting">
@@ -50,7 +58,7 @@ async function getAlbumOrPhoto (req) {
     </div>
   </div>
   <div id="map"></div>
-</div>`;
+</div></div>`;
     scripts = ['img-detail.js', 'tz.js'];
   } else {
     // album view

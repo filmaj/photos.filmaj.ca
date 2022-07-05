@@ -1,12 +1,12 @@
 function getExif() {
-  let img = document.getElementsByClassName('img-detail')[0].children[0];
+  let img = document.getElementsByClassName('img-detail')[0].children[1];
   let comment = document.getElementsByClassName('comment')[0];
   let details = document.getElementsByClassName('shot-details')[0];
   let settings = document.getElementsByClassName('img-setting')[0];
-  let data = document.getElementsByClassName('img-data')[0];
+  let container = document.getElementById('detail-container');
   EXIF.getData(img, function() {
     let tags = EXIF.getAllTags(this);
-    data.style.maxWidth=img.width + 'px';
+    container.style.maxWidth=img.width + 'px';
     let date = dayjs(`${tags.DateTime} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
     let dateEl = settings.getElementsByClassName('date')[0];
     let timestamp = date.unix();
@@ -35,6 +35,11 @@ function getExif() {
       attribution: '© OpenStreetMap'
     }).addTo(map);
   });
+}
+function imgError(evt) {
+  console.log('imgerror!', evt.src);
+  let album = evt.src.split('filmaj.ca/')[1];
+  window.location.replace('/' + album.split('/')[0]);
 }
 window.onload=getExif;
 function sexaToDecimal(coord) {
