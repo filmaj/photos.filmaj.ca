@@ -1,6 +1,6 @@
 const arc = require('@architect/functions');
 
-module.exports = function layout({ title, body, req, scripts }) {
+module.exports = function layout({ title, body, scripts }) {
   scripts = scripts || [];
   return {
     headers: {
@@ -22,8 +22,9 @@ module.exports = function layout({ title, body, req, scripts }) {
   ${(process.env.ARC_ENV === 'production' ? '<script async src="https://www.googletagmanager.com/gtag/js?id=G-GPE1GXNEM5"></script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "G-GPE1GXNEM5");</script>' : '')}
 </head>
 <body>
+  <div id="container">
 ${body}
-${(process.env.ARC_ENV === 'staging' ? '<pre style="display:none;"><code>' + JSON.stringify(req, null, 2) + '</code></pre>' : '')}
+  </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/dayjs.min.js" integrity="sha512-bwD3VD/j6ypSSnyjuaURidZksoVx3L1RPvTkleC48SbHCZsemT3VKMD39KknPnH728LLXVMTisESIBOAb5/W0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -50,4 +51,8 @@ ${scripts.map(src => `<script type="text/javascript" src="${arc.static(src)}"></
 </html>
 `
   };
+};
+
+module.exports.avatar = function() {
+  return `<a href="/" style="float:left;text-decoration:none;"><img src="${arc.static('fil.png')}" width=32 /></a>`;
 };

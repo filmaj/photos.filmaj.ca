@@ -3,7 +3,7 @@ function getExif() {
   let comment = document.getElementsByClassName('comment')[0];
   let details = document.getElementsByClassName('shot-details')[0];
   let settings = document.getElementsByClassName('img-setting')[0];
-  let container = document.getElementById('detail-container');
+  let container = document.getElementById('container');
   EXIF.getData(img, function() {
     let tags = EXIF.getAllTags(this);
     container.style.maxWidth=img.width + 'px';

@@ -2,6 +2,7 @@ html, body {
   font-family: 'Source Serif Pro', serif;
   color: rgba(0, 0, 0, 0.8);
   background-color: #FBF5F0;
+  margin: 0;
 }
 h1 {
   font-family: 'Source Sans Pro', sans-serif;
@@ -16,6 +17,7 @@ h2 {
 body {
   font-size: 100%;
   line-height: 1.56em;
+  margin: 0;
 }
 a[href] {
   color: #E5625E;
@@ -23,14 +25,20 @@ a[href] {
 }
 .flex { display: flex; }
 
-h1#main-heading { text-align: center; }
-
-/* Image Gallery */
-#gallery-container {
+h1, h2 {
+  text-align: center;
+}
+#container {
   margin: 0 auto;
-  padding: 5px;
   max-width: 80%;
 }
+@media (min-width: 320px) and (max-width: 600px) {
+  #container {
+    max-width: 100%;
+  }
+}
+
+/* Image Gallery */
 #gallery {
   list-style-type: none;
   display: flex;
@@ -40,9 +48,20 @@ h1#main-heading { text-align: center; }
 #gallery > li {
   height: 40vh;
   flex-grow: 1;
+  position: relative;
 }
 #gallery > li:last-child {
   flex-grow: 10;
+}
+#gallery > li p {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: #333;
+  margin: 5px;
+  background-color: rgb(251, 245, 240,0.5);
+  border-radius: 5px;
+  padding: 1px 5px;
 }
 #gallery img {
   max-height: 100%;
@@ -51,9 +70,6 @@ h1#main-heading { text-align: center; }
   vertical-align: bottom;
 }
 @media (min-width: 320px) and (max-width: 600px) {
-  #gallery-container {
-    max-width: 100%;
-  }
   #gallery > li {
     height: auto;
   }
@@ -65,12 +81,6 @@ h1#main-heading { text-align: center; }
 
 /* Image Detail */
 
-#detail-container {
-  margin: 0 auto;
-}
-#detail-container h2 {
-  text-align: center;
-}
 .img-detail {
   display: grid;
   position: relative;

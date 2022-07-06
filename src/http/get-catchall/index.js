@@ -27,7 +27,7 @@ async function getAlbumOrPhoto (req) {
     let beforeLink = `${albumLink}/${filePrefix}_${String(before).padStart(4, '0')}.${fileExt}`;
     let after = fileNumber + 1;
     let afterLink = `${albumLink}/${filePrefix}_${String(after).padStart(4, '0')}.${fileExt}`;
-    images = `<div id="detail-container"><a href="${albumLink}"><h2><span class="material-icons material-symbols-sharp" style="position:relative;top:3px;float:left;">photo_library</span>${album}</h2></a>`;
+    images = `${layout.avatar()}<a href="${albumLink}"><h2><span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_library</span>${album}</h2></a>`;
     images += `<div class="img-detail"><a id="left-arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}"><span class="material-icons material-symbols-sharp">navigate_before</span></a><img src="${imgBase}${req.path}" onerror="imgError(this)" /><a id="right-arrow" href="${afterLink}"><span class="material-icons material-symbols-sharp">navigate_next</span></a></div>`;
     images += `
 <div class="img-data">
@@ -58,7 +58,7 @@ async function getAlbumOrPhoto (req) {
     </div>
   </div>
   <div id="map"></div>
-</div></div>`;
+</div>`;
     scripts = ['img-detail.js', 'tz.js'];
   } else {
     // album view
@@ -80,9 +80,9 @@ async function getAlbumOrPhoto (req) {
       // no pics :(
       images = '<div id="gallery">No pictures in this album :(</div>';
     }
-    images = `<div id="gallery-container"><h1 id="main-heading"><a href="/" style="float:left;text-decoration:none;"><span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_album</span></a>${title}</h1>${images}</div>`;
+    images = `${layout.avatar()}<h1>${title}</h1>${images}`;
   }
-  return layout({ title, body: images, scripts, req });
+  return layout({ title, body: images, scripts });
 }
 
 exports.handler = arc.http.async(getAlbumOrPhoto);
