@@ -13,7 +13,7 @@ async function getIndex (req) {
   let albums = 'No Albums :(';
   if (keys.Contents.length === 0 && keys.CommonPrefixes.length) {
     // lets list albums
-    albums = keys.CommonPrefixes.map(p => {
+    albums = keys.CommonPrefixes.reverse().map(p => {
       const idx = p.Prefix.lastIndexOf('-');
       const label = p.Prefix.substring(0, idx) + ': ' + p.Prefix.substring(idx + 1, p.Prefix.length - 1);
       return `<li>
