@@ -19,5 +19,13 @@
   },
   "devDependencies": {
     "eslint": "^8.7.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filmaj/photos.filmaj.ca.git"
+  },
+  "bugs": {
+    "url": "https://github.com/filmaj/photos.filmaj.ca/issues"
+  },
+  "homepage": "https://photos.filmaj.ca"
 }
