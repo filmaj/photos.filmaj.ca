@@ -4,6 +4,7 @@ function getExif() {
   let details = document.getElementsByClassName('shot-details')[0];
   let settings = document.getElementsByClassName('img-setting')[0];
   let container = document.getElementById('container');
+  let artist = document.getElementById('artist');
   EXIF.getData(img, function() {
     let tags = EXIF.getAllTags(this);
     container.style.maxWidth=img.width + 'px';
@@ -11,6 +12,7 @@ function getExif() {
     let dateEl = settings.getElementsByClassName('date')[0];
     let timestamp = date.unix();
     dateEl.setAttribute('timestamp', timestamp);
+    artist.innerText = `Shot by ${tags.Artist}`;
     details.getElementsByClassName('camera')[0].innerHTML = `${tags.Model}`;
     details.getElementsByClassName('iso')[0].innerText = `ISO ${tags.ISOSpeedRatings}`;
     let focal = tags.FocalLength.numerator / tags.FocalLength.denominator;

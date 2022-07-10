@@ -35,6 +35,7 @@ async function getAlbumOrPhoto (req) {
     <div class="comment"></div>
     <div class="date"></div>
   </div>
+  <p class="artist"><span class="material-icons material-symbols-sharp">attribution</span><span id="artist"></span></p>
   <div class="shot-details">
     <div class="flex">
       <span class="material-icons material-symbols-sharp">photo_camera</span>

@@ -137,6 +137,10 @@ h1, h2 {
 .img-data {
   margin: 0 auto;
 }
+.img-data .artist {
+  margin: 0.5em 0.25em;
+  display:flex;
+}
 .shot-details {
   display: flex;
   justify-content: space-between;
