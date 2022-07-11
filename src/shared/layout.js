@@ -24,6 +24,7 @@ module.exports = function layout({ title, body, scripts, head, req }) {
   <meta property="og:site_name" content="Fil Maj's Photos" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://${process.env.ARC_ENV == 'production' ? 'photos.filmaj.ca' : 'photos-staging.filmaj.ca'}${req.path}" />
+  <meta name="twitter:domain" content="${process.env.ARC_ENV == 'production' ? 'photos.filmaj.ca' : 'photos-staging.filmaj.ca'}" />
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@filmaj">
   <meta name="twitter:creator" content="@filmaj">

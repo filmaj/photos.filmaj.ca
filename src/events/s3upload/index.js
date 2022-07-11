@@ -1,5 +1,6 @@
 let { StringDecoder } = require('string_decoder');
 let utf16decoder = new StringDecoder('utf16le');
+let utf8decoder = new StringDecoder('utf8');
 let arc = require('@architect/functions');
 let aws = require('aws-sdk');
 // Below loaded in from a layer; see `config.arc`
@@ -55,7 +56,15 @@ function extractTags(t) {
   let FNumber = cleanTag(t.FNumber);
   let ExposureTime = cleanTag(t.ExposureTime);
   let Lens = cleanTag(t.Lens ? t.Lens : t.LensInfo);
-  let UserComment = utf16decoder.end(Buffer.from(t.UserComment.value).slice(8));
+  // Poor person's charset detection; assumes a space exists in the comment :P
+  let UserComment; 
+  let commentBuffer = Buffer.from(t.UserComment.value).slice(8);
+  let utf16DecodedComment = utf16decoder.end(commentBuffer);
+  if (utf16DecodedComment.indexOf(' ') > -1) {
+    UserComment = utf16DecodedComment;
+  } else {
+    UserComment = utf8decoder.end(commentBuffer);
+  }
   let GPSLatitude = cleanTag(t.GPSLatitude);
   let GPSLongitude = cleanTag(t.GPSLongitude);
   let GPSLatitudeRef = cleanTag(t.GPSLatitudeRef);
