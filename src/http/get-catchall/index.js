@@ -74,6 +74,8 @@ async function getAlbumOrPhoto (req) {
     if (keys.Contents.length) {
       // list pictures inside albums
       images = keys.Contents.map(k => {
+        // Ignore anything that could be a thumbnail
+        if (k.Key.indexOf('thumb') > -1) return '';
         return `<li><a href="/${k.Key}"><img src="${imgBase}/${k.Key}" /></a></li>`;
       }).join('\n');
       images = `<ul id="gallery">${images}<li></li></ul>`;

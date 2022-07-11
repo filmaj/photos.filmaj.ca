@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@architect/functions": "4.1.1"
+    "@architect/functions": "4.1.1",
+    "exifreader": "4.5.0",
+    "sharp": "0.30.7"
   }
 }

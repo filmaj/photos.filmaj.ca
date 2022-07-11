@@ -33,7 +33,7 @@ function getExif() {
     console.log(tags.DateTime, lat, lon, tags);
     let map = L.map('map').setView([lat, lon], 5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
+      maxZoom: 18,
       attribution: '© OpenStreetMap'
     }).addTo(map);
   });

@@ -5,7 +5,7 @@ module.exports = {
     let bucketArn = `arn:aws:s3:::${bucket}`;
     // the @events S3upload SNS topic defined in app.arc
     let s3upload = 'S3uploadEventTopic';
-    // First thing we do is add permissions to our image godbucket to our role 
+    // First thing we do is add permissions to our image godbucket to our role
     cfn.Resources.PrivateStorageMacroPolicy = {
       Type: 'AWS::IAM::Policy',
       DependsOn: 'Role',
