@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@architect/functions": "4.1.1"
+    "@architect/functions": "4.1.1",
+    "dayjs": "1.11.3",
+    "tz-lookup-oss": "6.3.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

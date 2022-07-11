@@ -2,6 +2,18 @@ const arc = require('@architect/functions');
 const layout = require('@architect/shared/layout');
 const aws = require('aws-sdk');
 const { extname } = require('path');
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
+const relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
+const localizedFormat = require('dayjs/plugin/localizedFormat');
+dayjs.extend(localizedFormat);
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+const tz = require('tz-lookup-oss');
 const Bucket = process.env.PHOTO_BUCKET;
 const Delimiter = '/';
 const imgBase = 'https://photos-img.filmaj.ca';
@@ -16,6 +28,8 @@ async function getAlbumOrPhoto (req) {
   let scripts = [];
   if (ext.length) {
     // detail image view
+    let tables = await arc.tables();
+    let exifDB = tables.exifdata;
     title = req.path.substring(1);
     let album = title.split('/')[0];
     let albumLink = `/${album}`;
@@ -27,40 +41,71 @@ async function getAlbumOrPhoto (req) {
     let beforeLink = `${albumLink}/${filePrefix}_${String(before).padStart(4, '0')}.${fileExt}`;
     let after = fileNumber + 1;
     let afterLink = `${albumLink}/${filePrefix}_${String(after).padStart(4, '0')}.${fileExt}`;
-    images = `${layout.avatar()}<a href="${albumLink}"><h2><span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_library</span>${album}</h2></a>`;
-    images += `<div class="img-detail"><a id="left-arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}"><span class="material-icons material-symbols-sharp">navigate_before</span></a><img src="${imgBase}${req.path}" onerror="imgError(this)" /><a id="right-arrow" href="${afterLink}"><span class="material-icons material-symbols-sharp">navigate_next</span></a></div>`;
-    images += `
+    let thumbLink = `${imgBase}${req.path.replace('.jpeg', '-thumb.png')}`;
+    let exifTags = await exifDB.get({ key: title });
+    let date = dayjs(`${exifTags.DateTime.description} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
+    let latitude = exifTags.GPSLatitude.description;
+    let longitude = exifTags.GPSLongitude.description;
+    if (exifTags.GPSLatitudeRef.value[0] === 'S') latitude = latitude * -1;
+    if (exifTags.GPSLongitudeRef.value[0] === 'W') longitude = longitude * -1;
+    let timezone = tz(latitude, longitude);
+    let zonedDate = date.tz(timezone);
+    let displayDate = `${zonedDate.format('LL')}<br/>${date.fromNow()}`;
+    images = `
+<script type="text/javascript">latitude = ${latitude}; longitude = ${longitude};</script>
+${layout.avatar()}
+<a href="${albumLink}">
+  <h2>
+    <span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_library</span>${album}
+  </h2>
+</a>
+<div class="img-detail">
+  <a id="left-arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}">
+    <span class="material-icons material-symbols-sharp">navigate_before</span>
+  </a>
+  <img src="${imgBase}${req.path}" onerror="imgError(this)" />
+  <a id="right-arrow" href="${afterLink}">
+    <span class="material-icons material-symbols-sharp">navigate_next</span>
+  </a>
+</div>
 <div class="img-data">
   <div class="img-setting">
-    <div class="comment"></div>
-    <div class="date"></div>
+    <div class="comment">${exifTags.UserComment}</div>
+    <div class="date" timestamp="${date.unix()}">${displayDate}</div>
   </div>
-  <p class="artist"><span class="material-icons material-symbols-sharp">attribution</span><span id="artist"></span></p>
   <div class="shot-details">
     <div class="flex">
+      <span class="material-icons material-symbols-sharp">attribution</span>
+      <span class="camera">${exifTags.Artist.description}</span>
+    </div>
+    <div class="flex">
       <span class="material-icons material-symbols-sharp">photo_camera</span>
-      <span class="camera"></span>
+      <span class="camera">${exifTags.Model.description}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">theaters</span>
-      <span class="iso"></span>
+      <span class="iso">ISO ${exifTags.ISOSpeedRatings.description}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">filter_tilt_shift</span>
-      <span class="focal"></span>
+      <span class="focal">${exifTags.Lens.description}</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">center_focus_strong</span>
+      <span class="focal">${exifTags.FocalLength.description}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">camera</span>
-      <span class="fstop"></span>
+      <span class="fstop">${exifTags.FNumber.description}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">shutter_speed</span>
-      <span class="exposure"></span>
+      <span class="exposure">${exifTags.ExposureTime.description} s</span>
     </div>
   </div>
   <div id="map"></div>
 </div>`;
-    scripts = ['img-detail.js', 'tz.js'];
+    scripts = ['img-detail.js'];
   } else {
     // album view
     let album = req.path.substring(1);
