@@ -1,7 +1,8 @@
 const arc = require('@architect/functions');
 
-module.exports = function layout({ title, body, scripts }) {
+module.exports = function layout({ title, body, scripts, head, req }) {
   scripts = scripts || [];
+  head = head || [];
   return {
     headers: {
       'cache-control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
@@ -20,6 +21,14 @@ module.exports = function layout({ title, body, scripts }) {
   <link rel="stylesheet" href="${arc.static('index.css')}" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
   ${(process.env.ARC_ENV === 'production' ? '<script async src="https://www.googletagmanager.com/gtag/js?id=G-GPE1GXNEM5"></script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "G-GPE1GXNEM5");</script>' : '')}
+  <meta property="og:site_name" content="Fil Maj's Photos" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://${process.env.ARV_ENV == 'production' ? 'photos.filmaj.ca' : 'photos-staging.filmaj.ca'}${req.path}" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@filmaj">
+  <meta name="twitter:creator" content="@filmaj">
+  <meta property="og:locale" content="en_CA" />
+  ${head.join('\n')}
 </head>
 <body>
   <div id="container">

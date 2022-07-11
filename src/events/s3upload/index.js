@@ -32,9 +32,16 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let exifDB = tables.exifdata;
       await exifDB.put(dbRecord);
       console.log('Saved tag record to Dynamo', dbRecord);
-      // Resize image and write to thumbnail
-      let thumbnail = sharp(imageData).resize(300, 200).png();
+      // Resize image and write to thumbnail if thumbnail does not exist
       let newKey = Key.replace('.jpeg', '-thumb.png');
+      try {
+        res = await s3.headObject({ Bucket, Key: newKey }).promise();
+        console.log(Key, 'exists, not writing thumbnail');
+        return;
+      } catch (e) {
+        // noop, thumbnail does not exist
+      }
+      let thumbnail = sharp(imageData).resize(300, 200).png();
       res = await s3.putObject({
         Bucket,
         Key: newKey,

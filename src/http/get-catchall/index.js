@@ -26,12 +26,15 @@ async function getAlbumOrPhoto (req) {
   let listOptions;
   let keys;
   let scripts = [];
+  let head = [];
   if (ext.length) {
     // detail image view
     let tables = await arc.tables();
     let exifDB = tables.exifdata;
     title = req.path.substring(1);
     let album = title.split('/')[0];
+    head.push(`<meta property="og:title" content="Photo from ${album}" />`);
+    head.push(`<meta property="twitter:title" content="Photo from ${album}" />`);
     let albumLink = `/${album}`;
     let filename = title.split('/')[1];
     let fileNumber = parseInt(filename.split('_')[1].split('.')[0], 10);
@@ -42,7 +45,11 @@ async function getAlbumOrPhoto (req) {
     let after = fileNumber + 1;
     let afterLink = `${albumLink}/${filePrefix}_${String(after).padStart(4, '0')}.${fileExt}`;
     let thumbLink = `${imgBase}${req.path.replace('.jpeg', '-thumb.png')}`;
+    head.push(`<meta property="og:image" content="${thumbLink}"/>`);
+    head.push(`<meta property="twitter:image" content="${thumbLink}"/>`);
     let exifTags = await exifDB.get({ key: title });
+    head.push(`<meta property="og:description" content="${exifTags.UserComment}"/>`);
+    head.push(`<meta property="twitter:description" content="${exifTags.UserComment}"/>`);
     let date = dayjs(`${exifTags.DateTime.description} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
     let latitude = exifTags.GPSLatitude.description;
     let longitude = exifTags.GPSLongitude.description;
@@ -115,6 +122,12 @@ ${layout.avatar()}
     let date = album.substring(0, idx);
     let albumTitle = album.substring(idx, album.length - 1).replace(/-/g, ' ');
     title = `${albumTitle}, ${date}`;
+    head.push(`<meta property="og:title" content="${title}" />`);
+    head.push(`<meta property="twitter:title" content="${title}" />`);
+    head.push(`<meta property="og:image" content="${imgBase}/${album}DSC_0001-thumb.png"/>`);
+    head.push(`<meta property="twitter:image" content="${imgBase}/${album}DSC_0001-thumb.png"/>`);
+    head.push(`<meta property="og:description" content="${title} Photo Album"/>`);
+    head.push(`<meta property="twitter:description" content="${title} Photo Album"/>`);
     keys = await s3.listObjectsV2(listOptions).promise();
     if (keys.Contents.length) {
       // list pictures inside albums
@@ -130,7 +143,7 @@ ${layout.avatar()}
     }
     images = `${layout.avatar()}<h1>${title}</h1>${images}`;
   }
-  return layout({ title, body: images, scripts });
+  return layout({ title, body: images, scripts, req });
 }
 
 exports.handler = arc.http.async(getAlbumOrPhoto);

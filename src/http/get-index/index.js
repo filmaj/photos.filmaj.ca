@@ -9,6 +9,10 @@ const s3 = new aws.S3();
 
 async function getIndex (req) {
   let title = 'Fil Maj\'s Photo Albums';
+  let head = [
+    `<meta property="og:title" content="${title}" />`,
+    `<meta property="twitter:title" content="${title}" />`,
+  ];
   let keys = await s3.listObjectsV2(listOptions).promise();
   let albums = 'No Albums :(';
   if (keys.Contents.length === 0 && keys.CommonPrefixes.length) {
@@ -25,7 +29,7 @@ async function getIndex (req) {
     }).join('\n');
     albums = `${layout.avatar()}<h1>${title}</h1><ul id="gallery">${albums}</ul>`;
   }
-  return layout({ title, body: albums, req });
+  return layout({ title, body: albums, req, head });
 }
 
 exports.handler = arc.http.async(getIndex);
