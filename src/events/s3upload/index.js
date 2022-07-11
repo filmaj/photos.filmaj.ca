@@ -15,7 +15,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
     if (evt.eventSource == 'aws:s3') {
       // S3 upload notification
       let Bucket = evt.s3.bucket.name;
-      let Key = evt.s3.object.key.replace(/\+/g, ' ');
+      let Key = decodeURIComponent(evt.s3.object.key.replace(/\+/g, ' '));
       console.log('Got an S3 event', evt.eventName, typeof Bucket, Bucket, typeof Key, Key);
       if (Key.indexOf('thumb') > -1) {
         console.log('Potential thumbnail image detected; ignoring.');
@@ -54,7 +54,7 @@ function extractTags(t) {
   let FocalLength = cleanTag(t.FocalLength);
   let FNumber = cleanTag(t.FNumber);
   let ExposureTime = cleanTag(t.ExposureTime);
-  let Lens = cleanTag(t.Lens);
+  let Lens = cleanTag(t.Lens ? t.Lens : t.LensInfo);
   let UserComment = utf16decoder.end(Buffer.from(t.UserComment.value).slice(8));
   let GPSLatitude = cleanTag(t.GPSLatitude);
   let GPSLongitude = cleanTag(t.GPSLongitude);
