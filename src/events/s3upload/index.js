@@ -57,7 +57,7 @@ function extractTags(t) {
   let ExposureTime = cleanTag(t.ExposureTime);
   let Lens = cleanTag(t.Lens ? t.Lens : t.LensInfo);
   // Poor person's charset detection; assumes a space exists in the comment :P
-  let UserComment; 
+  let UserComment;
   let commentBuffer = Buffer.from(t.UserComment.value).slice(8);
   let utf16DecodedComment = utf16decoder.end(commentBuffer);
   if (utf16DecodedComment.indexOf(' ') > -1) {
