@@ -143,7 +143,7 @@ ${layout.avatar()}
     }
     images = `${layout.avatar()}<h1>${title}</h1>${images}`;
   }
-  return layout({ title, body: images, scripts, req });
+  return layout({ title, body: images, scripts, req, head });
 }
 
 exports.handler = arc.http.async(getAlbumOrPhoto);

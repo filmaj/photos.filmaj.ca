@@ -36,7 +36,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let newKey = Key.replace('.jpeg', '-thumb.png');
       try {
         res = await s3.headObject({ Bucket, Key: newKey }).promise();
-        console.log(Key, 'exists, not writing thumbnail');
+        console.log(newKey, 'exists, not writing thumbnail');
         return;
       } catch (e) {
         // noop, thumbnail does not exist
