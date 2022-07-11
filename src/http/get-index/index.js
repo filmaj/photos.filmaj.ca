@@ -11,6 +11,7 @@ async function getIndex (req) {
   let title = 'Fil Maj\'s Photo Albums';
   let head = [
     `<meta property="og:title" content="${title}" />`,
+    `<meta name="twitter:title" content="${title}">`,
   ];
   let keys = await s3.listObjectsV2(listOptions).promise();
   let albums = 'No Albums :(';
