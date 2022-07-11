@@ -1,6 +1,6 @@
 {
   "name": "photos.filmaj.ca",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "mah own purty picture archive",
   "main": "index.js",
   "scripts": {
