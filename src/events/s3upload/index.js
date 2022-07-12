@@ -7,6 +7,12 @@ let aws = require('aws-sdk');
 let sharp = require('/opt/node_modules/sharp');
 let exifreader = require('exifreader');
 let s3 = new aws.S3();
+const MAX_THUMB_SIZE = 300; // 300 pixels max long side for thumbnails
+const MAX_TILE_SIZE = 600; // 300 pixels max long side for thumbnails
+const TILE = 'tile';
+const THUMB = 'thumb';
+
+function ignoreKey(key) { return key.indexOf(TILE) > -1 || key.indexOf(THUMB) > -1; }
 
 exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(event) {
   console.log(JSON.stringify(event, null, 2));
@@ -17,11 +23,11 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       // S3 upload notification
       let Bucket = evt.s3.bucket.name;
       let Key = decodeURIComponent(evt.s3.object.key.replace(/\+/g, ' '));
-      console.log('Got an S3 event', evt.eventName, typeof Bucket, Bucket, typeof Key, Key);
-      if (Key.indexOf('thumb') > -1) {
-        console.log('Potential thumbnail image detected; ignoring.');
+      if (ignoreKey(Key) > -1) {
+        console.log(Key, 'Potential thumbnail image detected; ignoring.');
         return;
       }
+      console.log('Got an S3 event', evt.eventName, typeof Bucket, Bucket, typeof Key, Key);
       let res = await s3.getObject({ Bucket, Key }).promise();
       let imageData = res.Body;
       console.log('Retrieved S3 object', res.ContentLength, 'bytes', typeof imageData);
@@ -34,16 +40,35 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       await exifDB.put(dbRecord);
       console.log('Saved tag record to Dynamo', dbRecord);
       // Resize image and write to thumbnail
-      let newKey = Key.replace('.jpeg', '-thumb.png');
-      let thumbnail = sharp(imageData).resize(300, 200).png();
+      let newThumbKey = Key.replace('.jpeg', '-thumb.png');
+      let newTileKey = Key.replace('.jpeg', '-tile.png');
+      // detect orientation
+      let height = tags['Image Height'].value;
+      let width = tags['Image Width'].value;
+      let landscape = width >= height;
+      let ratio = width / height;
+      let thumbHeight = Math.floor(landscape ? MAX_THUMB_SIZE * ratio : MAX_THUMB_SIZE);
+      let thumbWidth = Math.floor(landscape ? MAX_THUMB_SIZE : MAX_THUMB_SIZE * ratio);
+      let tileHeight = Math.floor(landscape ? MAX_TILE_SIZE * ratio : MAX_TILE_SIZE);
+      let tileWidth = Math.floor(landscape ? MAX_TILE_SIZE : MAX_TILE_SIZE * ratio);
+      let thumbnail = sharp(imageData).resize(thumbWidth, thumbHeight).png();
       res = await s3.putObject({
         Bucket,
-        Key: newKey,
+        Key: newThumbKey,
         ContentType: 'image/png',
         CacheControl: 'public, max-age=157680000',
         Body: await thumbnail.toBuffer()
       }).promise();
-      console.log('Saved', newKey, `to S3 (ETag: ${res.ETag})`);
+      console.log('Saved', newThumbKey, `to S3 (ETag: ${res.ETag})`);
+      let tile = sharp(imageData).resize(tileWidth, tileHeight).png();
+      res = await s3.putObject({
+        Bucket,
+        Key: newTileKey,
+        ContentType: 'image/png',
+        CacheControl: 'public, max-age=157680000',
+        Body: await tile.toBuffer()
+      }).promise();
+      console.log('Saved', newTileKey, `to S3 (ETag: ${res.ETag})`);
     }
   }
 });
@@ -69,7 +94,9 @@ function extractTags(t) {
   let GPSLongitude = cleanTag(t.GPSLongitude);
   let GPSLatitudeRef = cleanTag(t.GPSLatitudeRef);
   let GPSLongitudeRef = cleanTag(t.GPSLongitudeRef);
-  return { Artist, DateTime, Model, ISOSpeedRatings, FocalLength, FNumber, ExposureTime, Lens, UserComment, GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef };
+  let ImageWidth= cleanTag(t.ImageWidth);
+  let ImageHeight= cleanTag(t.ImageHeight);
+  return { Artist, DateTime, Model, ISOSpeedRatings, FocalLength, FNumber, ExposureTime, Lens, UserComment, GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef, ImageWidth, ImageHeight };
 }
 function cleanTag(t) {
   delete t.id;
