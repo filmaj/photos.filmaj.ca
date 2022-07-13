@@ -1,5 +1,6 @@
 const arc = require('@architect/functions');
 const layout = require('@architect/shared/layout');
+const imageUtils = require('@architect/shared/images');
 const aws = require('aws-sdk');
 const { extname } = require('path');
 const dayjs = require('dayjs');
@@ -44,7 +45,7 @@ async function getAlbumOrPhoto (req) {
     let beforeLink = `${albumLink}/${filePrefix}_${String(before).padStart(4, '0')}.${fileExt}`;
     let after = fileNumber + 1;
     let afterLink = `${albumLink}/${filePrefix}_${String(after).padStart(4, '0')}.${fileExt}`;
-    let thumbLink = `${imgBase}${req.path.replace('.jpeg', '-thumb.png')}`;
+    let thumbLink = `${imgBase}${req.path.replace('.jpeg', `-${imageUtils.THUMB}.png`)}`;
     head.push(`<meta property="og:image" content="${thumbLink}"/>`);
     head.push(`<meta name="twitter:image" content="${thumbLink}">`);
     let exifTags = await exifDB.get({ key: title });
@@ -126,8 +127,8 @@ ${layout.avatar()}
     head.push(`<meta property="og:title" content="${title}" />`);
     head.push('<meta name="author" content="Filip Maj">');
     head.push(`<meta name="twitter:title" content="${title}">`);
-    head.push(`<meta property="og:image" content="${imgBase}/${album}DSC_0001-thumb.png"/>`);
-    head.push(`<meta name="twitter:image" content="${imgBase}/${album}DSC_0001-thumb.png">`);
+    head.push(`<meta property="og:image" content="${imgBase}/${album}DSC_0001-${imageUtils.THUMB}.png"/>`);
+    head.push(`<meta name="twitter:image" content="${imgBase}/${album}DSC_0001-${imageUtils.THUMB}.png">`);
     head.push(`<meta property="og:description" content="${title} Photo Album"/>`);
     head.push(`<meta name="twitter:description" content="${title} Photo Album">`);
     keys = await s3.listObjectsV2(listOptions).promise();
@@ -135,8 +136,9 @@ ${layout.avatar()}
       // list pictures inside albums
       images = keys.Contents.map(k => {
         // Ignore anything that could be a thumbnail
-        if (k.Key.indexOf('thumb') > -1) return '';
-        return `<li><a href="/${k.Key}"><img src="${imgBase}/${k.Key}" /></a></li>`;
+        if (imageUtils.ignoreKey(k.Key)) return '';
+        let tile = k.Key.replace('.jpeg', `-${imageUtils.TILE}.png`);
+        return `<li><a href="/${k.Key}"><img src="${imgBase}/${tile}" /></a></li>`;
       }).join('\n');
       images = `<ul id="gallery">${images}<li></li></ul>`;
     } else {

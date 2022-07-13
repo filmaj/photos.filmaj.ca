@@ -1,4 +1,5 @@
 let { StringDecoder } = require('string_decoder');
+let images = require('@architect/shared/image-utils');
 let utf16decoder = new StringDecoder('utf16le');
 let utf8decoder = new StringDecoder('utf8');
 let arc = require('@architect/functions');
@@ -7,12 +8,6 @@ let aws = require('aws-sdk');
 let sharp = require('/opt/node_modules/sharp');
 let exifreader = require('exifreader');
 let s3 = new aws.S3();
-const MAX_THUMB_SIZE = 300; // 300 pixels max long side for thumbnails
-const MAX_TILE_SIZE = 600; // 300 pixels max long side for thumbnails
-const TILE = 'tile';
-const THUMB = 'thumb';
-
-function ignoreKey(key) { return key.indexOf(TILE) > -1 || key.indexOf(THUMB) > -1; }
 
 exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(event) {
   console.log(JSON.stringify(event, null, 2));
@@ -23,7 +18,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       // S3 upload notification
       let Bucket = evt.s3.bucket.name;
       let Key = decodeURIComponent(evt.s3.object.key.replace(/\+/g, ' '));
-      if (ignoreKey(Key)) {
+      if (images.ignoreKey(Key)) {
         console.log(Key, 'Potential thumbnail image detected; ignoring.');
         continue;
       }
@@ -47,10 +42,10 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let width = tags['Image Width'].value;
       let landscape = width >= height;
       let ratio = width / height;
-      let thumbHeight = Math.floor(landscape ? MAX_THUMB_SIZE * ratio : MAX_THUMB_SIZE);
-      let thumbWidth = Math.floor(landscape ? MAX_THUMB_SIZE : MAX_THUMB_SIZE * ratio);
-      let tileHeight = Math.floor(landscape ? MAX_TILE_SIZE * ratio : MAX_TILE_SIZE);
-      let tileWidth = Math.floor(landscape ? MAX_TILE_SIZE : MAX_TILE_SIZE * ratio);
+      let thumbHeight = Math.floor(landscape ? images.MAX_THUMB_SIZE * ratio : images.MAX_THUMB_SIZE);
+      let thumbWidth = Math.floor(landscape ? images.MAX_THUMB_SIZE : images.MAX_THUMB_SIZE * ratio);
+      let tileHeight = Math.floor(landscape ? images.MAX_TILE_SIZE * ratio : images.MAX_TILE_SIZE);
+      let tileWidth = Math.floor(landscape ? images.MAX_TILE_SIZE : images.MAX_TILE_SIZE * ratio);
       let thumbnail = sharp(imageData).resize(thumbWidth, thumbHeight).png();
       res = await s3.putObject({
         Bucket,
@@ -94,11 +89,11 @@ function extractTags(t) {
   let GPSLongitude = cleanTag(t.GPSLongitude);
   let GPSLatitudeRef = cleanTag(t.GPSLatitudeRef);
   let GPSLongitudeRef = cleanTag(t.GPSLongitudeRef);
-  let ImageWidth= cleanTag(t.ImageWidth);
-  let ImageHeight= cleanTag(t.ImageHeight);
+  let ImageWidth= cleanTag(t['Image Width']);
+  let ImageHeight= cleanTag(t['Image Height']);
   return { Artist, DateTime, Model, ISOSpeedRatings, FocalLength, FNumber, ExposureTime, Lens, UserComment, GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef, ImageWidth, ImageHeight };
 }
 function cleanTag(t) {
-  delete t.id;
+  if (t && t.id) delete t.id;
   return t;
 }
