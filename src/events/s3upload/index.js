@@ -1,5 +1,5 @@
 let { StringDecoder } = require('string_decoder');
-let images = require('@architect/shared/image-utils');
+let imageUtils = require('@architect/shared/image-utils');
 let utf16decoder = new StringDecoder('utf16le');
 let utf8decoder = new StringDecoder('utf8');
 let arc = require('@architect/functions');
@@ -18,7 +18,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       // S3 upload notification
       let Bucket = evt.s3.bucket.name;
       let Key = decodeURIComponent(evt.s3.object.key.replace(/\+/g, ' '));
-      if (images.ignoreKey(Key)) {
+      if (imageUtils.ignoreKey(Key)) {
         console.log(Key, 'Potential thumbnail image detected; ignoring.');
         continue;
       }
@@ -42,10 +42,10 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let width = tags['Image Width'].value;
       let landscape = width >= height;
       let ratio = width / height;
-      let thumbHeight = Math.floor(landscape ? images.MAX_THUMB_SIZE * ratio : images.MAX_THUMB_SIZE);
-      let thumbWidth = Math.floor(landscape ? images.MAX_THUMB_SIZE : images.MAX_THUMB_SIZE * ratio);
-      let tileHeight = Math.floor(landscape ? images.MAX_TILE_SIZE * ratio : images.MAX_TILE_SIZE);
-      let tileWidth = Math.floor(landscape ? images.MAX_TILE_SIZE : images.MAX_TILE_SIZE * ratio);
+      let thumbHeight = Math.floor(landscape ? imageUtils.MAX_THUMB_SIZE * ratio : imageUtils.MAX_THUMB_SIZE);
+      let thumbWidth = Math.floor(landscape ? imageUtils.MAX_THUMB_SIZE : imageUtils.MAX_THUMB_SIZE * ratio);
+      let tileHeight = Math.floor(landscape ? imageUtils.MAX_TILE_SIZE * ratio : imageUtils.MAX_TILE_SIZE);
+      let tileWidth = Math.floor(landscape ? imageUtils.MAX_TILE_SIZE : imageUtils.MAX_TILE_SIZE * ratio);
       let thumbnail = sharp(imageData).resize(thumbWidth, thumbHeight).png();
       res = await s3.putObject({
         Bucket,
