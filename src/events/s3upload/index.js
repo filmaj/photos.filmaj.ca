@@ -41,13 +41,17 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let height = tags['Image Height'].value;
       let width = tags['Image Width'].value;
       let landscape = width >= height;
-      let ratio = width / height;
-      console.log('Image basics: w=', width, 'h=', height, 'landscape=', landscape, 'ratio=', ratio);
-      let thumbHeight = Math.floor(landscape ? imageUtils.MAX_THUMB_SIZE * ratio : imageUtils.MAX_THUMB_SIZE);
-      let thumbWidth = Math.floor(landscape ? imageUtils.MAX_THUMB_SIZE : imageUtils.MAX_THUMB_SIZE * ratio);
-      let tileHeight = Math.floor(landscape ? imageUtils.MAX_TILE_SIZE * ratio : imageUtils.MAX_TILE_SIZE);
-      let tileWidth = Math.floor(landscape ? imageUtils.MAX_TILE_SIZE : imageUtils.MAX_TILE_SIZE * ratio);
-      let thumbnail = sharp(imageData).resize(thumbWidth, thumbHeight).png();
+      console.log('Image basics: w=', width, 'h=', height, 'landscape=', landscape);
+      let thumbResizeOptions = {};
+      let tileResizeOptions = {};
+      if (landscape) {
+        thumbResizeOptions.width = imageUtils.MAX_THUMB_SIZE;
+        tileResizeOptions.width = imageUtils.MAX_TILE_SIZE;
+      } else {
+        thumbResizeOptions.height = imageUtils.MAX_THUMB_SIZE;
+        tileResizeOptions.height = imageUtils.MAX_TILE_SIZE;
+      }
+      let thumbnail = sharp(imageData).resize(thumbResizeOptions).png();
       res = await s3.putObject({
         Bucket,
         Key: newThumbKey,
@@ -56,7 +60,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
         Body: await thumbnail.toBuffer()
       }).promise();
       console.log('Saved', newThumbKey, `to S3 (ETag: ${res.ETag})`);
-      let tile = sharp(imageData).resize(tileWidth, tileHeight).png();
+      let tile = sharp(imageData).resize(tileResizeOptions).png();
       res = await s3.putObject({
         Bucket,
         Key: newTileKey,
