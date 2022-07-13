@@ -25,7 +25,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let Key = decodeURIComponent(evt.s3.object.key.replace(/\+/g, ' '));
       if (ignoreKey(Key) > -1) {
         console.log(Key, 'Potential thumbnail image detected; ignoring.');
-        return;
+        continue;
       }
       console.log('Got an S3 event', evt.eventName, typeof Bucket, Bucket, typeof Key, Key);
       let res = await s3.getObject({ Bucket, Key }).promise();
