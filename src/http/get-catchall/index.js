@@ -1,6 +1,6 @@
 const arc = require('@architect/functions');
 const layout = require('@architect/shared/layout');
-const imageUtils = require('@architect/shared/images');
+const imageUtils = require('@architect/shared/image-utils');
 const aws = require('aws-sdk');
 const { extname } = require('path');
 const dayjs = require('dayjs');

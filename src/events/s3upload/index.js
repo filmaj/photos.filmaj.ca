@@ -42,6 +42,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let width = tags['Image Width'].value;
       let landscape = width >= height;
       let ratio = width / height;
+      console.log('Image basics: w=', width, 'h=', height, 'landscape=', landscape, 'ratio=', ratio);
       let thumbHeight = Math.floor(landscape ? imageUtils.MAX_THUMB_SIZE * ratio : imageUtils.MAX_THUMB_SIZE);
       let thumbWidth = Math.floor(landscape ? imageUtils.MAX_THUMB_SIZE : imageUtils.MAX_THUMB_SIZE * ratio);
       let tileHeight = Math.floor(landscape ? imageUtils.MAX_TILE_SIZE * ratio : imageUtils.MAX_TILE_SIZE);
