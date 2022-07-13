@@ -23,7 +23,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       // S3 upload notification
       let Bucket = evt.s3.bucket.name;
       let Key = decodeURIComponent(evt.s3.object.key.replace(/\+/g, ' '));
-      if (ignoreKey(Key) > -1) {
+      if (ignoreKey(Key)) {
         console.log(Key, 'Potential thumbnail image detected; ignoring.');
         continue;
       }
