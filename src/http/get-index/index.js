@@ -23,7 +23,7 @@ async function getIndex (req) {
       const label = p.Prefix.substring(0, idx) + ': ' + p.Prefix.substring(idx + 1, p.Prefix.length - 1);
       return `<li>
         <a href="/${p.Prefix}">
-          <img src="${imgBase}/${p.Prefix}DSC_0001.jpeg" />
+          <img src="${imgBase}/${p.Prefix}DSC_0001-tile.png" />
           <p>${label}</p>
         </a>
       </li>`;
