@@ -150,6 +150,9 @@ h1, h2 {
   align-items: center;
   margin: 0.5em 0.25em;
 }
+.shot-details > div > span:last-child {
+  padding: 2px 5px 0px;
+}
 #map {
   height: 150px;
 }

@@ -111,10 +111,16 @@ ${layout.avatar()}
       <span class="material-icons material-symbols-sharp">shutter_speed</span>
       <span class="exposure">${exifTags.ExposureTime.description} s</span>
     </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">visibility</span>
+      <span class="exposure">${typeof exifTags.views === 'number' ? exifTags.views : 1}</span>
+    </div>
   </div>
   <div id="map"></div>
 </div>`;
     scripts = ['img-detail.js'];
+    exifTags.views = (typeof exifTags.views === 'number' ? exifTags.views + 1 : 1);
+    await exifDB.put(exifTags);
   } else {
     // album view
     let album = req.path.substring(1);

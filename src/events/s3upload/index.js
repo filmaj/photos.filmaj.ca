@@ -96,7 +96,7 @@ function extractTags(t) {
   let GPSLongitudeRef = cleanTag(t.GPSLongitudeRef);
   let ImageWidth= cleanTag(t['Image Width']);
   let ImageHeight= cleanTag(t['Image Height']);
-  return { Artist, DateTime, Model, ISOSpeedRatings, FocalLength, FNumber, ExposureTime, Lens, UserComment, GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef, ImageWidth, ImageHeight };
+  return { Artist, DateTime, Model, ISOSpeedRatings, FocalLength, FNumber, ExposureTime, Lens, UserComment, GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef, ImageWidth, ImageHeight, views: 0 };
 }
 function cleanTag(t) {
   if (t && t.id) delete t.id;
