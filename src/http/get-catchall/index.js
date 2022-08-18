@@ -46,11 +46,20 @@ async function getAlbumOrPhoto (req) {
     let after = fileNumber + 1;
     let afterLink = `${albumLink}/${filePrefix}_${String(after).padStart(4, '0')}.${fileExt}`;
     let thumbLink = `${imgBase}${req.path.replace('.jpeg', `-${imageUtils.THUMB}.png`)}`;
-    head.push(`<meta property="og:image" content="${thumbLink}"/>`);
-    head.push(`<meta name="twitter:image" content="${thumbLink}">`);
+    let squareLink = `${imgBase}${req.path.replace('.jpeg', `-${imageUtils.SQUARE}.png`)}`;
+    head.push(`<!-- non-whatsapp preview --><meta property="og:image" content="${thumbLink}"/>`);
+    head.push(`<meta property="og:image:secure_url" content="${thumbLink}"/>`);
+    head.push('<meta property="og:image:type" content="image/png"/>');
+    head.push(`<!-- whatsapp preview --><meta property="og:image" content="${squareLink}"/>`);
+    head.push(`<meta property="og:image:secure_url" content="${squareLink}"/>`);
+    head.push('<meta property="og:image:type" content="image/png"/>');
+    head.push('<meta property="og:image:width" content="400"/>');
+    head.push('<meta property="og:image:height" content="400"/>');
+    head.push(`<!-- twitter preview --><meta name="twitter:image" content="${squareLink}">`);
     let exifTags = await exifDB.get({ key: title });
     head.push(`<meta property="og:description" content="${exifTags.UserComment}"/>`);
     head.push(`<meta name="twitter:description" content="${exifTags.UserComment}">`);
+    head.push(`<meta name="twitter:image:alt" content="${exifTags.UserComment}">`);
     head.push(`<meta name="author" content="${exifTags.Artist.description}">`);
     let date = dayjs(`${exifTags.DateTime.description} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
     let latitude = exifTags.GPSLatitude.description;
@@ -60,6 +69,7 @@ async function getAlbumOrPhoto (req) {
     let timezone = tz(latitude, longitude);
     let zonedDate = date.tz(timezone);
     let displayDate = `${zonedDate.format('LL')}<br/>${date.fromNow()}`;
+    exifTags.views = (typeof exifTags.views === 'number' ? exifTags.views + 1 : 1);
     images = `
 <script type="text/javascript">latitude = ${latitude}; longitude = ${longitude};</script>
 ${layout.avatar()}
@@ -113,13 +123,12 @@ ${layout.avatar()}
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">visibility</span>
-      <span class="exposure">${typeof exifTags.views === 'number' ? exifTags.views : 1}</span>
+      <span class="exposure">${exifTags.views}</span>
     </div>
   </div>
   <div id="map"></div>
 </div>`;
     scripts = ['img-detail.js'];
-    exifTags.views = (typeof exifTags.views === 'number' ? exifTags.views + 1 : 1);
     await exifDB.put(exifTags);
   } else {
     // album view
@@ -130,11 +139,12 @@ ${layout.avatar()}
     let date = album.substring(0, idx);
     let albumTitle = album.substring(idx, album.length - 1).replace(/-/g, ' ');
     title = `${albumTitle}, ${date}`;
+    const cover = await imageUtils.cover(Bucket, album, imageUtils.THUMB, s3);
     head.push(`<meta property="og:title" content="${title}" />`);
     head.push('<meta name="author" content="Filip Maj">');
     head.push(`<meta name="twitter:title" content="${title}">`);
-    head.push(`<meta property="og:image" content="${imgBase}/${album}DSC_0001-${imageUtils.THUMB}.png"/>`);
-    head.push(`<meta name="twitter:image" content="${imgBase}/${album}DSC_0001-${imageUtils.THUMB}.png">`);
+    head.push(`<meta property="og:image" content="${imgBase}/${album}${cover}"/>`);
+    head.push(`<meta name="twitter:image" content="${imgBase}/${album}${cover}">`);
     head.push(`<meta property="og:description" content="${title} Photo Album"/>`);
     head.push(`<meta name="twitter:description" content="${title} Photo Album">`);
     keys = await s3.listObjectsV2(listOptions).promise();

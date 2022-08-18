@@ -1,5 +1,6 @@
 const arc = require('@architect/functions');
 const layout = require('@architect/shared/layout');
+const imageUtils = require('@architect/shared/image-utils');
 const aws = require('aws-sdk');
 const Bucket = process.env.PHOTO_BUCKET;
 const imgBase = 'https://photos-img.filmaj.ca';
@@ -18,16 +19,20 @@ async function getIndex (req) {
   let albums = 'No Albums :(';
   if (keys.Contents.length === 0 && keys.CommonPrefixes.length) {
     // lets list albums
-    albums = keys.CommonPrefixes.reverse().map(p => {
+    albums = '';
+    const images = keys.CommonPrefixes.reverse();
+    for (let i = 0; i < images.length; i++) {
+      const p = images[i];
       const idx = p.Prefix.lastIndexOf('-');
       const label = p.Prefix.substring(0, idx) + ': ' + p.Prefix.substring(idx + 1, p.Prefix.length - 1);
-      return `<li>
+      const cover = await imageUtils.cover(Bucket, p.Prefix, imageUtils.TILE, s3);
+      albums += `<li>
         <a href="/${p.Prefix}">
-          <img src="${imgBase}/${p.Prefix}DSC_0001-tile.png" />
+          <img src="${imgBase}/${p.Prefix}${cover}" />
           <p>${label}</p>
         </a>
       </li>`;
-    }).join('\n');
+    }
     albums = `${layout.avatar()}<h1>${title}</h1><ul id="gallery">${albums}</ul>`;
   }
   return layout({ title, body: albums, req, head });

@@ -19,7 +19,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let Bucket = evt.s3.bucket.name;
       let Key = decodeURIComponent(evt.s3.object.key.replace(/\+/g, ' '));
       if (imageUtils.ignoreKey(Key)) {
-        console.log(Key, 'Potential thumbnail image detected; ignoring.');
+        console.log(Key, 'Potential non-original image detected; ignoring.');
         continue;
       }
       console.log('Got an S3 event', evt.eventName, typeof Bucket, Bucket, typeof Key, Key);
@@ -34,9 +34,10 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let exifDB = tables.exifdata;
       await exifDB.put(dbRecord);
       console.log('Saved tag record to Dynamo', dbRecord);
-      // Resize image and write to thumbnail
-      let newThumbKey = Key.replace('.jpeg', '-thumb.png');
-      let newTileKey = Key.replace('.jpeg', '-tile.png');
+      // Resize image and write to various sizes
+      let newThumbKey = Key.replace('.jpeg', `-${imageUtils.THUMB}.png`);
+      let newTileKey = Key.replace('.jpeg', `-${imageUtils.THUMB}.png`);
+      let newSquareKey = Key.replace('.jpeg', `-${imageUtils.SQUARE}.png`);
       // detect orientation
       let height = tags['Image Height'].value;
       let width = tags['Image Width'].value;
@@ -44,6 +45,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       console.log('Image basics: w=', width, 'h=', height, 'landscape=', landscape);
       let thumbResizeOptions = {};
       let tileResizeOptions = {};
+      const squareResizeOptions = { width: imageUtils.SQUARE_SIZE, height: imageUtils.SQUARE_SIZE };
       if (landscape) {
         thumbResizeOptions.width = imageUtils.MAX_THUMB_SIZE;
         tileResizeOptions.width = imageUtils.MAX_TILE_SIZE;
@@ -69,6 +71,15 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
         Body: await tile.toBuffer()
       }).promise();
       console.log('Saved', newTileKey, `to S3 (ETag: ${res.ETag})`);
+      let square = sharp(imageData).resize(squareResizeOptions).png();
+      res = await s3.putObject({
+        Bucket,
+        Key: newSquareKey,
+        ContentType: 'image/png',
+        CacheControl: 'public, max-age=157680000',
+        Body: await square.toBuffer()
+      }).promise();
+      console.log('Saved', newSquareKey, `to S3 (ETag: ${res.ETag})`);
     }
   }
 });

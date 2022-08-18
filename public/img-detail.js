@@ -1,7 +1,7 @@
 function LoadMap() {
   resetContainer();
   // latitude and longitude injected by server side
-  let map = L.map('map').setView([latitude, longitude], 5);
+  let map = L.map('map').setView([latitude, longitude], 6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: '© OpenStreetMap'
