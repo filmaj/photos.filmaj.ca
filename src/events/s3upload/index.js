@@ -36,7 +36,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       console.log('Saved tag record to Dynamo', dbRecord);
       // Resize image and write to various sizes
       let newThumbKey = Key.replace('.jpeg', `-${imageUtils.THUMB}.png`);
-      let newTileKey = Key.replace('.jpeg', `-${imageUtils.THUMB}.png`);
+      let newTileKey = Key.replace('.jpeg', `-${imageUtils.TILE}.png`);
       let newSquareKey = Key.replace('.jpeg', `-${imageUtils.SQUARE}.png`);
       // detect orientation
       let height = tags['Image Height'].value;
