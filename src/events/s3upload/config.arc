@@ -1,4 +1,5 @@
 @aws
+runtime nodejs14.x
 timeout 30
 memory 512
 layers

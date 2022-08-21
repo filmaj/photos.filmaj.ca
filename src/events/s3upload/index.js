@@ -93,13 +93,15 @@ function extractTags(t) {
   let ExposureTime = cleanTag(t.ExposureTime);
   let Lens = cleanTag(t.Lens ? t.Lens : t.LensInfo);
   // Poor person's charset detection; assumes a space exists in the comment :P
-  let UserComment;
-  let commentBuffer = Buffer.from(t.UserComment.value).slice(8);
-  let utf16DecodedComment = utf16decoder.end(commentBuffer);
-  if (utf16DecodedComment.indexOf(' ') > -1) {
-    UserComment = utf16DecodedComment;
-  } else {
-    UserComment = utf8decoder.end(commentBuffer);
+  let UserComment = '';
+  if (t.UserComment && t.UserComment.value) {
+    let commentBuffer = Buffer.from(t.UserComment.value).slice(8);
+    let utf16DecodedComment = utf16decoder.end(commentBuffer);
+    if (utf16DecodedComment.indexOf(' ') > -1) {
+      UserComment = utf16DecodedComment;
+    } else {
+      UserComment = utf8decoder.end(commentBuffer);
+    }
   }
   let GPSLatitude = cleanTag(t.GPSLatitude);
   let GPSLongitude = cleanTag(t.GPSLongitude);
@@ -107,7 +109,7 @@ function extractTags(t) {
   let GPSLongitudeRef = cleanTag(t.GPSLongitudeRef);
   let ImageWidth= cleanTag(t['Image Width']);
   let ImageHeight= cleanTag(t['Image Height']);
-  return { Artist, DateTime, Model, ISOSpeedRatings, FocalLength, FNumber, ExposureTime, Lens, UserComment, GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef, ImageWidth, ImageHeight, views: 0 };
+  return { Artist, DateTime, Model, ISOSpeedRatings, FocalLength, FNumber, ExposureTime, Lens, UserComment, GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef, ImageWidth, ImageHeight, views: 0, key: '' };
 }
 function cleanTag(t) {
   if (t && t.id) delete t.id;
