@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@architect/functions": "4.1.1",
+    "@architect/functions": "5.2.1",
     "dayjs": "1.11.3",
     "tz-lookup-oss": "6.3.0"
   },
