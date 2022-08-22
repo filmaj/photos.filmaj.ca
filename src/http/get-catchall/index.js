@@ -57,15 +57,16 @@ async function getAlbumOrPhoto (req) {
     head.push('<meta property="og:image:height" content="400"/>');
     head.push(`<!-- twitter preview --><meta name="twitter:image" content="${squareLink}">`);
     let exifTags = await exifDB.get({ key: title });
-    head.push(`<meta property="og:description" content="${exifTags.UserComment}"/>`);
-    head.push(`<meta name="twitter:description" content="${exifTags.UserComment}">`);
-    head.push(`<meta name="twitter:image:alt" content="${exifTags.UserComment}">`);
-    head.push(`<meta name="author" content="${exifTags.Artist.description}">`);
-    let date = dayjs(`${exifTags.DateTime.description} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
-    let latitude = exifTags.GPSLatitude.description;
-    let longitude = exifTags.GPSLongitude.description;
-    if (exifTags.GPSLatitudeRef.value[0] === 'S') latitude = latitude * -1;
-    if (exifTags.GPSLongitudeRef.value[0] === 'W') longitude = longitude * -1;
+    head.push(`<meta property="og:description" content="${exifTags.comment}"/>`);
+    head.push(`<meta name="twitter:description" content="${exifTags.comment}">`);
+    head.push(`<meta name="twitter:image:alt" content="${exifTags.comment}">`);
+    head.push(`<meta name="author" content="${exifTags.artist}">`);
+    // TODO: this UTC-5 offset is based on my move date to Toronto. Before that, it should be -0800...
+    let date = dayjs(`${exifTags.date} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
+    let latitude = exifTags.raw.GPSLatitude.description;
+    let longitude = exifTags.raw.GPSLongitude.description;
+    if (exifTags.raw.GPSLatitudeRef.value[0] === 'S') latitude = latitude * -1;
+    if (exifTags.raw.GPSLongitudeRef.value[0] === 'W') longitude = longitude * -1;
     let timezone = tz(latitude, longitude);
     let zonedDate = date.tz(timezone);
     let displayDate = `${zonedDate.format('LL')}<br/>${date.fromNow()}`;
@@ -89,37 +90,37 @@ ${layout.avatar()}
 </div>
 <div class="img-data">
   <div class="img-setting">
-    <div class="comment">${exifTags.UserComment}</div>
+    <div class="comment">${exifTags.comment}</div>
     <div class="date" timestamp="${date.unix()}">${displayDate}</div>
   </div>
   <div class="shot-details">
     <div class="flex">
       <span class="material-icons material-symbols-sharp">attribution</span>
-      <span class="camera">${exifTags.Artist.description}</span>
+      <span class="camera">${exifTags.artist}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">photo_camera</span>
-      <span class="camera">${exifTags.Model.description}</span>
+      <span class="camera">${exifTags.model}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">theaters</span>
-      <span class="iso">ISO ${exifTags.ISOSpeedRatings.description}</span>
+      <span class="iso">ISO ${exifTags.iso}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">filter_tilt_shift</span>
-      <span class="focal">${exifTags.Lens.description}</span>
+      <span class="focal">${exifTags.lens}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">center_focus_strong</span>
-      <span class="focal">${exifTags.FocalLength.description}</span>
+      <span class="focal">${exifTags.focalLength}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">camera</span>
-      <span class="fstop">${exifTags.FNumber.description}</span>
+      <span class="fstop">${exifTags.fNumber}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">shutter_speed</span>
-      <span class="exposure">${exifTags.ExposureTime.description} s</span>
+      <span class="exposure">${exifTags.exposure} s</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">visibility</span>

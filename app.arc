@@ -17,6 +17,12 @@ s3upload
 exifdata
   key *String
 
+@tables-indexes
+exifdata
+  album *String
+  views **Number
+  name AlbumByViews
+
 @static
 fingerprint true
 ignore

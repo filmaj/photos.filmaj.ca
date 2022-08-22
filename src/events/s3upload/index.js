@@ -12,6 +12,8 @@ let s3 = new aws.S3();
 exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(event) {
   console.log(JSON.stringify(event, null, 2));
   if (!event.Records || !event.Records.length) return;
+  let tables = await arc.tables();
+  let exifDB = tables.exifdata;
   for (let i = 0; i < event.Records.length; i++) {
     let evt = event.Records[i];
     if (evt.eventSource == 'aws:s3') {
@@ -22,7 +24,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
         console.log(Key, 'Potential non-original image detected; ignoring.');
         continue;
       }
-      console.log('Got an S3 event', evt.eventName, typeof Bucket, Bucket, typeof Key, Key);
+      console.log('Got an S3 event', evt.eventName, Bucket, Key);
       let res = await s3.getObject({ Bucket, Key }).promise();
       let imageData = res.Body;
       console.log('Retrieved S3 object', res.ContentLength, 'bytes', typeof imageData);
@@ -30,8 +32,9 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
       let tags = exifreader.load(imageData);
       let dbRecord = extractTags(tags);
       dbRecord.key = Key;
-      let tables = await arc.tables();
-      let exifDB = tables.exifdata;
+      const slash = Key.indexOf('/');
+      dbRecord.album = Key.substring(0, slash + 1);
+      dbRecord.filename = Key.substring(slash + 1);
       await exifDB.put(dbRecord);
       console.log('Saved tag record to Dynamo', dbRecord);
       // Resize image and write to various sizes
@@ -84,32 +87,36 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
   }
 });
 function extractTags(t) {
-  let Artist = cleanTag(t.Artist);
-  let DateTime = cleanTag(t.DateCreated ? t.DateCreated : (t.CreateDate ? t.createDate : (t.DateTimeOriginal ? t.DateTimeOriginal : t.DateTime)));
-  let Model = cleanTag(t.Model);
-  let ISOSpeedRatings = cleanTag(t.ISOSpeedRatings);
-  let FocalLength = cleanTag(t.FocalLength);
-  let FNumber = cleanTag(t.FNumber);
-  let ExposureTime = cleanTag(t.ExposureTime);
-  let Lens = cleanTag(t.Lens ? t.Lens : t.LensInfo);
+  let artist = cleanTag(t.Artist);
+  let date = cleanTag(t.DateCreated ? t.DateCreated : (t.CreateDate ? t.createDate : (t.DateTimeOriginal ? t.DateTimeOriginal : t.DateTime)));
+  let model = cleanTag(t.Model);
+  let iso = cleanTag(t.ISOSpeedRatings);
+  let focalLength = cleanTag(t.FocalLength);
+  let fNumber = cleanTag(t.FNumber);
+  let exposure = cleanTag(t.ExposureTime);
+  let lens = cleanTag(t.Lens ? t.Lens : t.LensInfo);
   // Poor person's charset detection; assumes a space exists in the comment :P
-  let UserComment = '';
+  let comment = '';
   if (t.UserComment && t.UserComment.value) {
     let commentBuffer = Buffer.from(t.UserComment.value).slice(8);
     let utf16DecodedComment = utf16decoder.end(commentBuffer);
     if (utf16DecodedComment.indexOf(' ') > -1) {
-      UserComment = utf16DecodedComment;
+      comment = utf16DecodedComment;
     } else {
-      UserComment = utf8decoder.end(commentBuffer);
+      comment = utf8decoder.end(commentBuffer);
     }
   }
   let GPSLatitude = cleanTag(t.GPSLatitude);
   let GPSLongitude = cleanTag(t.GPSLongitude);
   let GPSLatitudeRef = cleanTag(t.GPSLatitudeRef);
   let GPSLongitudeRef = cleanTag(t.GPSLongitudeRef);
-  let ImageWidth= cleanTag(t['Image Width']);
-  let ImageHeight= cleanTag(t['Image Height']);
-  return { Artist, DateTime, Model, ISOSpeedRatings, FocalLength, FNumber, ExposureTime, Lens, UserComment, GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef, ImageWidth, ImageHeight, views: 0, key: '' };
+  let width = cleanTag(t['Image Width']);
+  let height= cleanTag(t['Image Height']);
+  return {
+    views: 0, key: '', album: '', filename: '', width, height,
+    artist, date, model, iso, focalLength, fNumber, exposure, lens, comment,
+    raw: { GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef }
+  };
 }
 function cleanTag(t) {
   if (t && t.id) delete t.id;
