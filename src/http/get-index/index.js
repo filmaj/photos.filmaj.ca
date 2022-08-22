@@ -33,7 +33,7 @@ async function getIndex (req) {
         </a>
       </li>`;
     }
-    albums = `${layout.avatar()}<h1>${title}</h1><ul id="gallery">${albums}</ul>`;
+    albums = `${layout.avatar('https://filmaj.ca')}<h1>${title}</h1><ul id="gallery">${albums}</ul>`;
   }
   return layout({ title, body: albums, req, head });
 }

@@ -56,6 +56,6 @@ ${scripts.map(src => `<script type="text/javascript" src="${arc.static(src)}"></
   };
 };
 
-module.exports.avatar = function() {
-  return `<a href="/" style="float:left;text-decoration:none;"><img src="${arc.static('fil.png')}" width=32 /></a>`;
+module.exports.avatar = function(target) {
+  return `<a href="${target || '/'}" style="float:left;text-decoration:none;"><img src="${arc.static('fil.png')}" width=32 /></a>`;
 };
