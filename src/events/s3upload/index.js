@@ -88,7 +88,7 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
 });
 function extractTags(t) {
   let artist = cleanTag(t.Artist);
-  let date = cleanTag(t.DateCreated ? t.DateCreated : (t.CreateDate ? t.createDate : (t.DateTimeOriginal ? t.DateTimeOriginal : t.DateTime)));
+  let date = cleanTag(t.DateCreated ? t.DateCreated : (t.CreateDate ? t.CreateDate : (t.DateTimeOriginal ? t.DateTimeOriginal : t.DateTime)));
   let model = cleanTag(t.Model);
   let iso = cleanTag(t.ISOSpeedRatings);
   let focalLength = cleanTag(t.FocalLength);
