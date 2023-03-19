@@ -16,6 +16,7 @@ s3upload
 @tables
 exifdata
   key *String
+  PointInTimeRecovery true
 
 @tables-indexes
 exifdata
