@@ -106,10 +106,10 @@ function extractTags(t) {
       comment = utf8decoder.end(commentBuffer);
     }
   }
-  let GPSLatitude = cleanTag(t.GPSLatitude);
-  let GPSLongitude = cleanTag(t.GPSLongitude);
-  let GPSLatitudeRef = cleanTag(t.GPSLatitudeRef);
-  let GPSLongitudeRef = cleanTag(t.GPSLongitudeRef);
+  let GPSLatitude = rawTag(t.GPSLatitude);
+  let GPSLongitude = rawTag(t.GPSLongitude);
+  let GPSLatitudeRef = rawTag(t.GPSLatitudeRef);
+  let GPSLongitudeRef = rawTag(t.GPSLongitudeRef);
   let width = cleanTag(t['Image Width']);
   let height= cleanTag(t['Image Height']);
   return {
@@ -119,6 +119,11 @@ function extractTags(t) {
   };
 }
 function cleanTag(t) {
+  if (t.value instanceof Array && t.value.length == 1 && t.value[0]) return t.value[0]; // Artist
+  if (typeof t.value == 'string' || typeof t.value == 'number') return t.value; // Model, ISOSpeedRatings, Lens, Width/Height
+  if (t.description && t.description.length) return t.description; // FocalLength, FNumber, ExposureTime
+}
+function rawTag(t) {
   if (t && t.id) delete t.id;
   return t;
 }
