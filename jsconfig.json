@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonJS",
+    "moduleResolution": "node",
+    "target": "es6",
+    "baseUrl": ".",
+    "paths": {
+      "@architect/shared/*": ["./src/shared/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
