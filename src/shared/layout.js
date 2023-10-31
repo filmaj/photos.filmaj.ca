@@ -18,6 +18,7 @@ module.exports = function layout({ title, body, scripts, head, req }) {
   <link rel="apple-touch-icon" sizes="120x120" href="${arc.static('favicons/apple-touch-icon.png')}">
   <link rel="icon" type="image/png" sizes="32x32" href="${arc.static('favicons/favicon-32x32.png')}">
   <link rel="icon" type="image/png" sizes="16x16" href="${arc.static('favicons/favicon-16x16.png')}">
+  <link rel="stylesheet" href="https://use.typekit.net/cwg3htt.css">
   <link rel="stylesheet" href="https://filmaj.ca/css/filmaj.css" />
   <link rel="stylesheet" href="${arc.static('index.css')}" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
