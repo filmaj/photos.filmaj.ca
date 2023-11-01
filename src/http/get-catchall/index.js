@@ -35,7 +35,6 @@ async function getAlbumOrPhoto (req) {
     title = req.path.substring(1);
     let album = title.split('/')[0];
     head.push(`<meta property="og:title" content="Photo from ${album}" />`);
-    head.push(`<meta name="twitter:title" content="Photo from ${album}">`);
     let albumLink = `/${album}`;
     let filename = title.split('/')[1];
     let fileNumber = parseInt(filename.split('_')[1].split('.')[0], 10);
@@ -58,8 +57,6 @@ async function getAlbumOrPhoto (req) {
     head.push(`<!-- twitter preview --><meta name="twitter:image" content="${squareLink}">`);
     let exifTags = await exifDB.get({ key: title });
     head.push(`<meta property="og:description" content="${exifTags.comment}"/>`);
-    head.push(`<meta name="twitter:description" content="${exifTags.comment}">`);
-    head.push(`<meta name="twitter:image:alt" content="${exifTags.comment}">`);
     head.push(`<meta name="author" content="${exifTags.artist}">`);
     // TODO: this UTC-5 offset is based on my move date to Toronto. Before that, it should be -0800...
     let date = dayjs(`${exifTags.date} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
@@ -73,7 +70,6 @@ async function getAlbumOrPhoto (req) {
     exifTags.views = (typeof exifTags.views === 'number' ? exifTags.views + 1 : 1);
     images = `
 <script type="text/javascript">latitude = ${latitude}; longitude = ${longitude};</script>
-${layout.avatar()}
 <a href="${albumLink}">
   <h2>
     <span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_library</span>${album}
@@ -143,11 +139,8 @@ ${layout.avatar()}
     const cover = await imageUtils.cover(Bucket, album, imageUtils.THUMB, s3);
     head.push(`<meta property="og:title" content="${title}" />`);
     head.push('<meta name="author" content="Filip Maj">');
-    head.push(`<meta name="twitter:title" content="${title}">`);
     head.push(`<meta property="og:image" content="${imgBase}/${album}${cover}"/>`);
-    head.push(`<meta name="twitter:image" content="${imgBase}/${album}${cover}">`);
     head.push(`<meta property="og:description" content="${title} Photo Album"/>`);
-    head.push(`<meta name="twitter:description" content="${title} Photo Album">`);
     keys = await s3.listObjectsV2(listOptions).promise();
     if (keys.Contents.length) {
       // list pictures inside albums
@@ -162,7 +155,7 @@ ${layout.avatar()}
       // no pics :(
       images = '<div id="gallery">No pictures in this album :(</div>';
     }
-    images = `${layout.avatar()}<h1>${title}</h1>${images}`;
+    images = `<h2>${title}</h2>${images}`;
   }
   return layout({ title, body: images, scripts, req, head });
 }

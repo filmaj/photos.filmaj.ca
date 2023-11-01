@@ -12,7 +12,6 @@ async function getIndex (req) {
   let title = 'Fil Maj\'s Photo Albums';
   let head = [
     `<meta property="og:title" content="${title}" />`,
-    `<meta name="twitter:title" content="${title}">`,
     '<meta name="author" content="Filip Maj">',
   ];
   let keys = await s3.listObjectsV2(listOptions).promise();
@@ -33,7 +32,7 @@ async function getIndex (req) {
         </a>
       </li>`;
     }
-    albums = `${layout.avatar('https://filmaj.ca')}<h1>${title}</h1><ul id="gallery">${albums}</ul>`;
+    albums = `<ul id="gallery">${albums}</ul>`;
   }
   return layout({ title, body: albums, req, head });
 }

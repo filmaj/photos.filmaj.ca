@@ -30,6 +30,7 @@ const Limit = !!LIMIT;
 
 // Add custom migration logic here
 function update(record) {
+  return record;
   const key = record.key;
   const slash = key.indexOf('/');
   record.album = key.substring(0, slash + 1);
