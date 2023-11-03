@@ -32,7 +32,7 @@ async function getAlbumOrPhoto (req) {
     // detail image view
     let tables = await arc.tables();
     let exifDB = tables.exifdata;
-    title = req.path.substring(1);
+    title = decodeURI(req.path.substring(1));
     let album = title.split('/')[0];
     head.push(`<meta property="og:title" content="Photo from ${album}" />`);
     let albumLink = `/${album}`;
@@ -55,7 +55,9 @@ async function getAlbumOrPhoto (req) {
     head.push('<meta property="og:image:width" content="400"/>');
     head.push('<meta property="og:image:height" content="400"/>');
     head.push(`<!-- twitter preview --><meta name="twitter:image" content="${squareLink}">`);
+    console.log('exif retrieval', title);
     let exifTags = await exifDB.get({ key: title });
+    console.log(exifTags);
     head.push(`<meta property="og:description" content="${exifTags.comment}"/>`);
     head.push(`<meta name="author" content="${exifTags.artist}">`);
     // TODO: this UTC-5 offset is based on my move date to Toronto. Before that, it should be -0800...
@@ -129,7 +131,7 @@ async function getAlbumOrPhoto (req) {
     await exifDB.put(exifTags);
   } else {
     // album view
-    let album = req.path.substring(1);
+    let album = decodeURI(req.path.substring(1));
     if (album[album.length - 1] !== '/') album = `${album}/`; // needs trailing slashes
     listOptions = { Bucket, Delimiter, Prefix: album, StartAfter: album };
     let idx = album.lastIndexOf('-');

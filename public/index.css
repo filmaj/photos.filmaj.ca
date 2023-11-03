@@ -22,10 +22,10 @@ header {
 #gallery > li p {
   position: absolute;
   bottom: 0;
-  right: 0;
-  color: #333;
+  left: 0;
+  color: color-mix(in srgb, var(--color-light) 70%, transparent);
   margin: 5px;
-  background-color: rgb(251, 245, 240,0.5);
+  background-color: color-mix(in srgb, var(--color-dark-accent) 30%, transparent);
   border-radius: 5px;
   padding: 1px 5px;
 }
@@ -35,7 +35,7 @@ header {
   object-fit: cover;
   vertical-align: bottom;
 }
-@media (min-width: 320px) and (max-width: 600px) {
+@media (max-width: 600px) {
   #gallery > li {
     height: auto;
   }
