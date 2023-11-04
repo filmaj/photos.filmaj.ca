@@ -15,9 +15,9 @@ module.exports = function layout({ title, body, scripts, head, req }) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title}</title>
-  <link rel="apple-touch-icon" sizes="120x120" href="${arc.static('favicons/apple-touch-icon.png')}">
-  <link rel="icon" type="image/png" sizes="32x32" href="${arc.static('favicons/favicon-32x32.png')}">
-  <link rel="icon" type="image/png" sizes="16x16" href="${arc.static('favicons/favicon-16x16.png')}">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://filmaj.ca/img/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://filmaj.ca/img/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://filmaj.ca/img/favicons/favicon-16x16.png">
   <link rel="stylesheet" href="https://use.typekit.net/cwg3htt.css">
   <link rel="stylesheet" href="https://filmaj.ca/css/reset.css" />
   <link rel="stylesheet" href="https://filmaj.ca/css/filmaj.css" />
