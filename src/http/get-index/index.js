@@ -3,7 +3,6 @@ const layout = require('@architect/shared/layout');
 const imageUtils = require('@architect/shared/image-utils');
 const aws = require('aws-sdk');
 const Bucket = process.env.PHOTO_BUCKET;
-const imgBase = 'https://photos-img.filmaj.ca';
 const Delimiter = '/';
 const listOptions = { Bucket, Delimiter };
 const s3 = new aws.S3();
@@ -31,7 +30,7 @@ async function getIndex (req) {
         const cover = await imageUtils.cover(Bucket, p.Prefix, imageUtils.TILE, s3);
         albums += `<li>
           <a href="/${p.Prefix}">
-            <img src="${imgBase}/${p.Prefix}${cover}" />
+            <img src="${imageUtils.URL_BASE}/${p.Prefix}${cover}" />
             <p>${label}</p>
           </a>
         </li>`;

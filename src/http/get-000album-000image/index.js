@@ -13,7 +13,6 @@ const timezone = require('dayjs/plugin/timezone');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 const tz = require('tz-lookup-oss');
-const imgBase = 'https://photos-img.filmaj.ca';
 
 exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   let title = '';
@@ -34,8 +33,8 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   let beforeLink = `${albumLink}/${filePrefix}_${String(before).padStart(4, '0')}.${fileExt}`;
   let after = fileNumber + 1;
   let afterLink = `${albumLink}/${filePrefix}_${String(after).padStart(4, '0')}.${fileExt}`;
-  let thumbLink = `${imgBase}${req.path.replace('.jpeg', `-${imageUtils.THUMB}.png`)}`;
-  let squareLink = `${imgBase}${req.path.replace('.jpeg', `-${imageUtils.SQUARE}.png`)}`;
+  let thumbLink = `${imageUtils.URL_BASE}${req.path.replace('.jpeg', `-${imageUtils.THUMB}.png`)}`;
+  let squareLink = `${imageUtils.URL_BASE}${req.path.replace('.jpeg', `-${imageUtils.SQUARE}.png`)}`;
   head.push(`<!-- non-whatsapp preview --><meta property="og:image" content="${thumbLink}"/>`);
   head.push(`<meta property="og:image:secure_url" content="${thumbLink}"/>`);
   head.push('<meta property="og:image:type" content="image/png"/>');
@@ -71,7 +70,7 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
 <a id="left-arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}">
   <span class="material-icons material-symbols-sharp">navigate_before</span>
 </a>
-<img src="${imgBase}${req.path}" onerror="imgError(this)" />
+<img src="${imageUtils.URL_BASE}${req.path}" onerror="imgError(this)" />
 <a id="right-arrow" href="${afterLink}">
   <span class="material-icons material-symbols-sharp">navigate_next</span>
 </a>

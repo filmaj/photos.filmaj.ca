@@ -5,7 +5,6 @@ const aws = require('aws-sdk');
 const dayjs = require('dayjs');
 const Bucket = process.env.PHOTO_BUCKET;
 const Delimiter = '/';
-const imgBase = 'https://photos-img.filmaj.ca';
 const s3 = new aws.S3();
 const cache = {};
 
@@ -30,7 +29,7 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
     const cover = await imageUtils.cover(Bucket, album, imageUtils.THUMB, s3);
     head.push(`<meta property="og:title" content="${title}" />`);
     head.push('<meta name="author" content="Filip Maj">');
-    head.push(`<meta property="og:image" content="${imgBase}/${album}${cover}"/>`);
+    head.push(`<meta property="og:image" content="${imageUtils.URL_BASE}/${album}${cover}"/>`);
     head.push(`<meta property="og:description" content="${title} Photo Album"/>`);
     keys = await s3.listObjectsV2(listOptions).promise();
     if (keys.Contents.length) {
@@ -39,7 +38,7 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
         // Ignore anything that could be a thumbnail
         if (imageUtils.ignoreKey(k.Key)) return '';
         let tile = k.Key.replace('.jpeg', `-${imageUtils.TILE}.png`);
-        return `<li><a href="/${k.Key}"><img src="${imgBase}/${tile}" /></a></li>`;
+        return `<li><a href="/${k.Key}"><img src="${imageUtils.URL_BASE}/${tile}" /></a></li>`;
       }).join('\n');
       images = `<ul id="gallery">${images}<li></li></ul>`;
     } else {

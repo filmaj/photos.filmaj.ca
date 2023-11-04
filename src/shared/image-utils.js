@@ -5,6 +5,7 @@ const SQUARE = 'square';
 const IGNORED = [TILE, THUMB, COVER, SQUARE];
 
 module.exports = {
+  URL_BASE: 'https://photos-img.filmaj.ca',
   TILE,
   THUMB,
   COVER,
