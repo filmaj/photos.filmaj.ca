@@ -7,8 +7,9 @@ region us-east-1
 
 @http
 get /
+get /:album
+get /:album/:image
 get /api/randoimg
-get /*
 
 @events
 s3upload
