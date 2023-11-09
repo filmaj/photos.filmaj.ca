@@ -15,15 +15,11 @@ dayjs.extend(timezone);
 const tz = require('tz-lookup-oss');
 
 exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
-  let title = '';
-  let images = '';
-  let scripts = [];
-  let head = [];
   let tables = await arc.tables();
   let exifDB = tables.exifdata;
-  title = decodeURI(req.path.substring(1));
+  const key = decodeURI(req.path.substring(1));
   let album = req.params.album;
-  head.push(`<meta property="og:title" content="Photo from ${album}" />`);
+  const head = [`<meta property="og:title" content="Photo from ${album}" />`];
   let albumLink = `/${album}`;
   let filename = req.params.image;
   let fileNumber = parseInt(filename.split('_')[1].split('.')[0], 10);
@@ -44,13 +40,14 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   head.push('<meta property="og:image:width" content="400"/>');
   head.push('<meta property="og:image:height" content="400"/>');
   head.push(`<!-- twitter preview --><meta name="twitter:image" content="${squareLink}">`);
-  console.log('exif retrieval', title);
-  let exifTags = await exifDB.get({ key: title });
+  let exifTags = await exifDB.get({ key });
   console.log(exifTags);
   head.push(`<meta property="og:description" content="${exifTags.comment}"/>`);
   head.push(`<meta name="author" content="${exifTags.artist}">`);
-  // TODO: this UTC-5 offset is based on my move date to Toronto. Before that, it should be -0800...
-  let date = dayjs(`${exifTags.date} -0500`, 'YYYY:MM:DD HH:mm:ss ZZ');
+  const snapYear = dayjs(exifTags.date);
+  // prior to 2019 i was based on the westcoast
+  const UTCOffset = snapYear.year() <= 2019 ? '-0500' : '-0500';
+  let date = dayjs(`${exifTags.date} ${UTCOffset}`, 'YYYY:MM:DD HH:mm:ss ZZ');
   let latitude = exifTags.raw.GPSLatitude.description;
   let longitude = exifTags.raw.GPSLongitude.description;
   if (exifTags.raw.GPSLatitudeRef.value[0] === 'S') latitude = latitude * -1;
@@ -59,13 +56,9 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   let zonedDate = date.tz(timezone);
   let displayDate = `${zonedDate.format('LL')}<br/>${date.fromNow()}`;
   exifTags.views = (typeof exifTags.views === 'number' ? exifTags.views + 1 : 1);
-  images = `
+  const images = `
 <script type="text/javascript">latitude = ${latitude}; longitude = ${longitude};</script>
-<a href="${albumLink}">
-<h2>
-  <span class="material-icons material-symbols-sharp" style="position:relative;top:3px;">photo_library</span>${album}
-</h2>
-</a>
+<a href="${albumLink}"><h2>${album}</h2></a>
 <div class="img-detail">
 <a id="left-arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}">
   <span class="material-icons material-symbols-sharp">navigate_before</span>
@@ -116,7 +109,7 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
 </div>
 <div id="map"></div>
 </div>`;
-  scripts = ['img-detail.js'];
+  const scripts = ['img-detail.js'];
   await exifDB.put(exifTags);
-  return layout({ title, body: images, scripts, req, head });
+  return layout({ title: key, body: images, scripts, req, head });
 });

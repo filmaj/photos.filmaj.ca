@@ -31,10 +31,10 @@ module.exports = function layout({ title, body, scripts, head, req }) {
   <meta property="og:locale" content="en_CA" />
   ${head.join('\n')}
 </head>
-<body>
+<body class="flow">
   <header>
-    <h1><a href="/">Fil Maj's Photos</a></h1>
-    <a href="/"><img src="https://filmaj.ca/img/me/fil.svg" /></a>
+    <h1><a href="/">Fil&nbsp;Maj's Photos</a></h1>
+    <a href="https://filmaj.ca" target="_blank"><img src="https://filmaj.ca/img/me/fil.svg" /></a>
   </header>
   <main>
 ${body}

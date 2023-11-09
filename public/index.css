@@ -1,10 +1,19 @@
+body {
+  --flow-space: 0.5em;
+}
 /* Header */
 header {
+  --flow-space: 0;
   display:flex;
   justify-content: space-between;
 }
+header img {
+  max-height: var(--size-step-5);
+}
 /* Image Gallery */
 #gallery {
+  --flow-space: 0;
+  margin-top: var(--line-height);
   list-style-type: none;
   display: flex;
   flex-wrap: wrap;
@@ -121,4 +130,5 @@ header {
 }
 #map {
   height: 150px;
+  --flow-space: 0;
 }
