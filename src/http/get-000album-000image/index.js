@@ -19,7 +19,8 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   let exifDB = tables.exifdata;
   const key = decodeURI(req.path.substring(1));
   let album = req.params.album;
-  const head = [`<meta property="og:title" content="Photo from ${album}" />`];
+  const [albumTitle, _albumDate] = imageUtils.albumTitle(album);
+  const head = [`<meta property="og:title" content="Photo from ${albumTitle}" />`];
   let albumLink = `/${album}`;
   let filename = req.params.image;
   let fileNumber = parseInt(filename.split('_')[1].split('.')[0], 10);
@@ -54,61 +55,69 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   if (exifTags.raw.GPSLongitudeRef.value[0] === 'W') longitude = longitude * -1;
   let timezone = tz(latitude, longitude);
   let zonedDate = date.tz(timezone);
-  let displayDate = `${zonedDate.format('LL')}<br/>${date.fromNow()}`;
   exifTags.views = (typeof exifTags.views === 'number' ? exifTags.views + 1 : 1);
   const images = `
 <script type="text/javascript">latitude = ${latitude}; longitude = ${longitude};</script>
-<a href="${albumLink}"><h2>${album}</h2></a>
-<div class="img-detail">
-<a id="left-arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}">
+<h4><a href="${albumLink}">Back to ${albumTitle}</a></h4>
+<!--
+<a id="left-arrow" class="arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}">
   <span class="material-icons material-symbols-sharp">navigate_before</span>
 </a>
-<img src="${imageUtils.URL_BASE}${req.path}" onerror="imgError(this)" />
-<a id="right-arrow" href="${afterLink}">
+-->
+<img id="picture" src="${imageUtils.URL_BASE}${req.path}" onerror="imgError(this)" />
+<!--
+<a id="right-arrow" class="arrow" href="${afterLink}">
   <span class="material-icons material-symbols-sharp">navigate_next</span>
 </a>
+-->
+<div id="details">
+  <div class="img-setting">
+    <p class="comment">${exifTags.comment}</p>
+    <div class="date">
+      <time datetime="${date.format()}">${zonedDate.format('LL')}</time>
+      <p>${zonedDate.fromNow()}</p>
+    </div>
+  </div>
+  <div class="shot-details">
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">attribution</span>
+      <span class="camera">${exifTags.artist}</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">photo_camera</span>
+      <span class="camera">${exifTags.model}</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">theaters</span>
+      <span class="iso">ISO ${exifTags.iso}</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">filter_tilt_shift</span>
+      <span class="focal">${exifTags.lens}</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">center_focus_strong</span>
+      <span class="focal">${exifTags.focalLength}</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">camera</span>
+      <span class="fstop">${exifTags.fNumber}</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">shutter_speed</span>
+      <span class="exposure">${exifTags.exposure} s</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">visibility</span>
+      <span class="exposure">${exifTags.views}</span>
+    </div>
+  </div>
 </div>
-<div class="img-data">
-<div class="img-setting">
-  <div class="comment">${exifTags.comment}</div>
-  <div class="date" timestamp="${date.unix()}">${displayDate}</div>
+<!--
+  <div id="map"></div>
 </div>
-<div class="shot-details">
-  <div class="flex">
-    <span class="material-icons material-symbols-sharp">attribution</span>
-    <span class="camera">${exifTags.artist}</span>
-  </div>
-  <div class="flex">
-    <span class="material-icons material-symbols-sharp">photo_camera</span>
-    <span class="camera">${exifTags.model}</span>
-  </div>
-  <div class="flex">
-    <span class="material-icons material-symbols-sharp">theaters</span>
-    <span class="iso">ISO ${exifTags.iso}</span>
-  </div>
-  <div class="flex">
-    <span class="material-icons material-symbols-sharp">filter_tilt_shift</span>
-    <span class="focal">${exifTags.lens}</span>
-  </div>
-  <div class="flex">
-    <span class="material-icons material-symbols-sharp">center_focus_strong</span>
-    <span class="focal">${exifTags.focalLength}</span>
-  </div>
-  <div class="flex">
-    <span class="material-icons material-symbols-sharp">camera</span>
-    <span class="fstop">${exifTags.fNumber}</span>
-  </div>
-  <div class="flex">
-    <span class="material-icons material-symbols-sharp">shutter_speed</span>
-    <span class="exposure">${exifTags.exposure} s</span>
-  </div>
-  <div class="flex">
-    <span class="material-icons material-symbols-sharp">visibility</span>
-    <span class="exposure">${exifTags.views}</span>
-  </div>
-</div>
-<div id="map"></div>
-</div>`;
+-->
+`;
   const scripts = ['img-detail.js'];
   await exifDB.put(exifTags);
   return layout({ title: key, body: images, scripts, req, head });

@@ -26,5 +26,12 @@ module.exports = {
       cover = `DSC_0001-${size}.png`;
     }
     return cover;
+  },
+  albumTitle: (album) => {
+    let idx = album.lastIndexOf('-');
+    album = album.replace(/-/g, ' ');
+    let date = album.substring(0, idx);
+    let albumTitle = album.substring(idx + 1).replace(/\//g, '');
+    return [albumTitle, date];
   }
 };

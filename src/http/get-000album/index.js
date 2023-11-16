@@ -22,9 +22,7 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
     images = cache[album];
   } else {
     listOptions = { Bucket, Delimiter, Prefix: album, StartAfter: album };
-    let idx = album.lastIndexOf('-');
-    let date = album.substring(0, idx);
-    let albumTitle = album.substring(idx, album.length - 1).replace(/-/g, ' ');
+    const [albumTitle, date] = imageUtils.albumTitle(album);
     title = `${albumTitle}, ${date}`;
     const cover = await imageUtils.cover(Bucket, album, imageUtils.THUMB, s3);
     head.push(`<meta property="og:title" content="${title}" />`);
