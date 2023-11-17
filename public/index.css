@@ -87,17 +87,6 @@ a#right-arrow {
 .arrow .material-icons {
   font-size: 80px;
 }
-@media (min-width: 320px) and (max-width: 600px) {
-  .arrow .material-icons {
-    font-size: 40px;
-  }
-  a#right-arrow {
-    right: 0;
-  }
-  a#left-arrow {
-    left: 0;
-  }
-}
 #details {
   width: 0;
   min-width: 100%;
@@ -130,7 +119,9 @@ a#right-arrow {
   font-size: var(--size-step-0);
   max-width: unset;
 }
-#shot-details {
+span.material-icons {
+  position: relative;
+  top: 4px;
 }
 #map {
   height: 150px;

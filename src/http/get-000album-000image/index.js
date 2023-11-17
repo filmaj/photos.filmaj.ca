@@ -59,17 +59,13 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   const images = `
 <script type="text/javascript">latitude = ${latitude}; longitude = ${longitude};</script>
 <h4><a href="${albumLink}">Back to ${albumTitle}</a></h4>
-<!--
 <a id="left-arrow" class="arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}">
   <span class="material-icons material-symbols-sharp">navigate_before</span>
 </a>
--->
 <img id="picture" src="${imageUtils.URL_BASE}${req.path}" onerror="imgError(this)" />
-<!--
 <a id="right-arrow" class="arrow" href="${afterLink}">
   <span class="material-icons material-symbols-sharp">navigate_next</span>
 </a>
--->
 <div id="details">
   <div id="img-setting" class="tags">
     <p class="comment">${exifTags.comment}</p>
@@ -80,20 +76,16 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   </div>
   <div id="shot-details" class="tags">
     <div class="flex">
+      <span class="material-icons material-symbols-sharp">visibility</span>
+      <span class="exposure">${exifTags.views}</span>
+    </div>
+    <div class="flex">
       <span class="material-icons material-symbols-sharp">attribution</span>
       <span class="camera">${exifTags.artist}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">photo_camera</span>
       <span class="camera">${exifTags.model}</span>
-    </div>
-    <div class="flex">
-      <span class="material-icons material-symbols-sharp">theaters</span>
-      <span class="iso">ISO ${exifTags.iso}</span>
-    </div>
-    <div class="flex">
-      <span class="material-icons material-symbols-sharp">filter_tilt_shift</span>
-      <span class="focal">${exifTags.lens}</span>
     </div>
     <div class="flex">
       <span class="material-icons material-symbols-sharp">center_focus_strong</span>
@@ -108,8 +100,12 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
       <span class="exposure">${exifTags.exposure} s</span>
     </div>
     <div class="flex">
-      <span class="material-icons material-symbols-sharp">visibility</span>
-      <span class="exposure">${exifTags.views}</span>
+      <span class="material-icons material-symbols-sharp">filter_tilt_shift</span>
+      <span class="focal">${exifTags.lens}</span>
+    </div>
+    <div class="flex">
+      <span class="material-icons material-symbols-sharp">theaters</span>
+      <span class="iso">ISO ${exifTags.iso}</span>
     </div>
   </div>
 </div>
