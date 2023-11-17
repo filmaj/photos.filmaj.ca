@@ -71,14 +71,14 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
 </a>
 -->
 <div id="details">
-  <div class="img-setting">
+  <div id="img-setting" class="tags">
     <p class="comment">${exifTags.comment}</p>
     <div class="date">
       <time datetime="${date.format()}">${zonedDate.format('LL')}</time>
       <p>${zonedDate.fromNow()}</p>
     </div>
   </div>
-  <div class="shot-details">
+  <div id="shot-details" class="tags">
     <div class="flex">
       <span class="material-icons material-symbols-sharp">attribution</span>
       <span class="camera">${exifTags.artist}</span>

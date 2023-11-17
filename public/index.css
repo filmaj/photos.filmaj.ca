@@ -102,30 +102,35 @@ a#right-arrow {
   width: 0;
   min-width: 100%;
 }
-.img-setting {
+.tags {
   display: flex;
   justify-content: space-between;
-  gap: var(--space-2xl);
-  --flow-space: 0;
-}
-.img-setting .date {
-  white-space: nowrap;
-}
-.date > * {
-  text-align: right;
-}
-.shot-details {
-  display: flex;
-  justify-content: space-evenly;
   flex-wrap: wrap;
-
+  --flow-space: 0;
+  gap: var(--space-s);
+  margin-top: 1em;
 }
-.shot-details > div {
-  align-items: center;
-  margin: 0.5em 0.25em;
+#img-setting {
+  --threshold: 50ch;
 }
-.shot-details > div > span:last-child {
-  padding: 2px 5px 0px;
+#img-setting > * {
+  flex-grow: 1;
+  flex-basis: calc((var(--threshold) - 100%) * 999);
+}
+#img-setting p#comment {
+  text-align: start;
+}
+#img-setting .date {
+  white-space: nowrap;
+  flex-grow: 0.2;
+}
+#img-setting .date > * {
+  text-align: right;
+  display: block;
+  font-size: var(--size-step-0);
+  max-width: unset;
+}
+#shot-details {
 }
 #map {
   height: 150px;
