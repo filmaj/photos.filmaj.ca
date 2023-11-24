@@ -23,7 +23,6 @@ module.exports = function layout({ title, body, scripts, head, req }) {
   <link rel="stylesheet" href="https://filmaj.ca/css/filmaj.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="${arc.static('index.css')}" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
   ${(process.env.ARC_ENV === 'production' ? '<script data-goatcounter="https://filmaj-photos.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>' : '')}
   <meta property="og:site_name" content="Fil Maj's Photos" />
   <meta property="og:type" content="website" />
@@ -34,14 +33,24 @@ module.exports = function layout({ title, body, scripts, head, req }) {
 <body class="flow">
   <header>
     <h1><a href="/">Fil&nbsp;Maj's Photos</a></h1>
-    <a href="https://filmaj.ca" target="_blank"><img src="https://filmaj.ca/img/me/fil.svg" /></a>
+    <a href="https://filmaj.ca" target="_blank"><img src="https://filmaj.ca/img/me/fil.svg" alt="Fil Maj's avatar" /></a>
   </header>
   <main>
 ${body}
-  </div>
+    <footer>
+      <div id="copyright">
+        ©&nbsp;2014-${new Date().getFullYear()} Filip&nbsp;Maj
+      </div>
+      <div id="powered">
+        <span>Powered&nbsp;by</span>
+        <a href="https://arc.codes" target="_blank">
+          <img src="${arc.static('arc.svg')}" alt="Architect framework logo" />
+        </a>
+      </div>
+    </footer>
+  </main>
 </body>
-<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
-${scripts.map(src => `<script type="text/javascript" src="${arc.static(src)}"></script>`).join('\n')}
+${scripts.map(src => `<script type="text/javascript" src="${src.startsWith('http://') || src.startsWith('https://') ? src : arc.static(src)}"></script>`).join('\n')}
 </html>
 `
   };

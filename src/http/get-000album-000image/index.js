@@ -20,7 +20,10 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   const key = decodeURI(req.path.substring(1));
   let album = req.params.album;
   const [albumTitle, _albumDate] = imageUtils.albumTitle(album);
-  const head = [`<meta property="og:title" content="Photo from ${albumTitle}" />`];
+  const head = [
+    `<meta property="og:title" content="Photo from ${albumTitle}" />`,
+    '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>',
+  ];
   let albumLink = `/${album}`;
   let filename = req.params.image;
   let fileNumber = parseInt(filename.split('_')[1].split('.')[0], 10);
@@ -62,7 +65,7 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
 <a id="left-arrow" class="arrow" style="display: ${before == 0 ? 'none' : 'block'}" href="${beforeLink}">
   <span class="material-icons material-symbols-sharp">navigate_before</span>
 </a>
-<img id="picture" src="${imageUtils.URL_BASE}${req.path}" onerror="imgError(this)" />
+<img id="picture" src="${imageUtils.URL_BASE}${req.path}" alt="${exifTags.comment}" />
 <a id="right-arrow" class="arrow" href="${afterLink}">
   <span class="material-icons material-symbols-sharp">navigate_next</span>
 </a>
@@ -114,7 +117,7 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
 </div>
 -->
 `;
-  const scripts = ['img-detail.js'];
+  const scripts = ['img-detail.js', 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'];
   await exifDB.put(exifTags);
   return layout({ title: key, body: images, scripts, req, head });
 });

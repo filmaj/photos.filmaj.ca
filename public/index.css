@@ -17,6 +17,30 @@ header {
 header img {
   max-height: var(--size-step-5);
 }
+/* Footer */
+footer {
+  font-size: var(--size-step-0);
+  border-top: 1px dotted var(--color-dark-accent);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: var(--size-step-0);
+  margin-top: 1em !important;
+}
+footer div {
+  --flow-space: 0;
+}
+footer #powered {
+  text-align: right;
+}
+footer #copyright {
+  text-align: left;
+}
+footer img {
+  max-height: var(--line-height);
+  display: inline;
+  position: relative;
+  top: 6px;
+}
 /* Image Gallery */
 #gallery {
   --flow-space: 0;
