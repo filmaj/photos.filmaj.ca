@@ -29,7 +29,7 @@ async function getIndex (req) {
         const label = p.Prefix.substring(0, idx) + ': ' + p.Prefix.substring(idx + 1, p.Prefix.length - 1);
         const cover = await imageUtils.cover(Bucket, p.Prefix, imageUtils.TILE, s3);
         albums += `<li>
-          <a href="/${p.Prefix}">
+          <a href="/${p.Prefix.endsWith('/') ? p.Prefix.substring(0, p.Prefix.length - 1) : p.Prefix}">
             <img src="${imageUtils.URL_BASE}/${p.Prefix}${cover}" />
             <p>${label}</p>
           </a>

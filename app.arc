@@ -27,6 +27,7 @@ exifdata
 
 @static
 fingerprint true
+prune true
 ignore
   .eslintrc.js
 

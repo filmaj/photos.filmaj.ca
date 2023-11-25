@@ -58,6 +58,10 @@ module.exports = {
         }
       });
 
+      // Also rewrite the static url so it doesnt conflict with the /album/image route
+      cfn.Resources.HTTP.Properties.DefinitionBody.paths['/a/_static/{proxy+}'] = cfn.Resources.HTTP.Properties.DefinitionBody.paths['/_static/{proxy+}'];
+      delete cfn.Resources.HTTP.Properties.DefinitionBody.paths['/_static/{proxy+}'];
+
       return cfn;
     }
   }
