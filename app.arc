@@ -4,6 +4,7 @@ photos-filmaj-ca
 @aws
 profile default
 region us-east-1
+memory 128
 
 @http
 get /
