@@ -22,7 +22,7 @@ module.exports = function layout({ title, body, scripts, head, req }) {
   <link rel="stylesheet" href="https://filmaj.ca/css/reset.css" />
   <link rel="stylesheet" href="https://filmaj.ca/css/filmaj.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="/a${arc.static('index.css')}" />
+  <link rel="stylesheet" href="${arc.static('index.css')}" />
   ${(process.env.ARC_ENV === 'production' ? '<script data-goatcounter="https://filmaj-photos.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>' : '')}
   <meta property="og:site_name" content="Fil Maj's Photos" />
   <meta property="og:type" content="website" />
@@ -44,13 +44,13 @@ ${body}
       <div id="powered">
         <span>Powered&nbsp;by</span>
         <a href="https://arc.codes" target="_blank">
-          <img src="/a${arc.static('arc.svg')}" alt="Architect framework logo" />
+          <img src="${arc.static('arc.svg')}" alt="Architect framework logo" />
         </a>
       </div>
     </footer>
   </main>
 </body>
-${scripts.map(src => `<script type="text/javascript" src="${src.startsWith('http://') || src.startsWith('https://') ? src : '/a' + arc.static(src)}"></script>`).join('\n')}
+${scripts.map(src => `<script type="text/javascript" src="${src.startsWith('http://') || src.startsWith('https://') ? src : arc.static(src)}"></script>`).join('\n')}
 </html>
 `
   };

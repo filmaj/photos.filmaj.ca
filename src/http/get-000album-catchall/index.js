@@ -15,17 +15,22 @@ dayjs.extend(timezone);
 const tz = require('tz-lookup-oss');
 
 exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
-  let tables = await arc.tables();
-  let exifDB = tables.exifdata;
+  const tables = await arc.tables();
+  const exifDB = tables.exifdata;
   const key = decodeURI(req.path.substring(1));
-  let album = req.params.album;
+  const album = req.params.album;
+  const exifTags = await exifDB.get({ key });
+  // Redirect to first image in case of 404
+  if (!exifTags) return { statusCode: 302, headers: { Location: `/${album}/DSC_0001.jpeg` }};
+
+  console.log(exifTags);
   const [albumTitle, _albumDate] = imageUtils.albumTitle(album);
   const head = [
     `<meta property="og:title" content="Photo from ${albumTitle}" />`,
     '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>',
   ];
   let albumLink = `/${album}`;
-  let filename = req.params.image;
+  let filename = req.params.proxy;
   let fileNumber = parseInt(filename.split('_')[1].split('.')[0], 10);
   let filePrefix = filename.split('_')[0];
   let fileExt = filename.split('.')[1];
@@ -44,8 +49,6 @@ exports.handler = arc.http.async(async function getAlbumOrPhoto (req) {
   head.push('<meta property="og:image:width" content="400"/>');
   head.push('<meta property="og:image:height" content="400"/>');
   head.push(`<!-- twitter preview --><meta name="twitter:image" content="${squareLink}">`);
-  let exifTags = await exifDB.get({ key });
-  console.log(exifTags);
   head.push(`<meta property="og:description" content="${exifTags.comment}"/>`);
   head.push(`<meta name="author" content="${exifTags.artist}">`);
   const snapYear = dayjs(exifTags.date);

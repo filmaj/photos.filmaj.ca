@@ -9,7 +9,7 @@ memory 128
 @http
 get /
 get /:album
-get /:album/:image
+get /:album/*
 get /api/randoimg
 
 @events
