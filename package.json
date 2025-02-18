@@ -1,26 +1,26 @@
 {
   "name": "photos.filmaj.ca",
   "version": "1.0.2",
-  "description": "mah own purty picture archive",
+  "description": "fil's picture archive",
   "main": "index.js",
   "scripts": {
-    "start": "arc sandbox",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx enhance dev",
+    "lint": "npx @biomejs/biome check --write ./app/**/*.mjs",
+    "test": "npm run lint"
   },
   "keywords": [
     "aws",
     "architect",
+    "enhance",
     "photos"
   ],
   "author": "Filip Maj",
   "license": "MIT",
-  "dependencies": {
-    "@architect/architect": "^10.4.1",
-    "@aws-sdk/util-dynamodb": "^3.438.0"
-  },
   "devDependencies": {
-    "@architect/functions": "^5.2.1",
-    "eslint": "^8.7.0"
+    "@architect/architect": "^11.1.0",
+    "@biomejs/biome": "^1.9.4",
+    "@enhance/cli": "^1.2.1",
+    "@enhance/types": "^0.7.0"
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,10 @@
   "bugs": {
     "url": "https://github.com/filmaj/photos.filmaj.ca/issues"
   },
-  "homepage": "https://photos.filmaj.ca"
+  "homepage": "https://photos.filmaj.ca",
+  "dependencies": {
+    "@architect/functions": "^8.1.7",
+    "@enhance/arc-plugin-block-bots": "^0.0.5",
+    "@enhance/arc-plugin-enhance": "^11.0.4"
+  }
 }

@@ -2,18 +2,10 @@
 photos-filmaj-ca
 
 @aws
-profile default
 region us-east-1
-memory 128
 
-@http
-get /
-get /:album
-get /:album/*
-get /api/randoimg
-
-@events
-s3upload
+# @events
+# s3upload
 
 @tables
 exifdata
@@ -28,9 +20,8 @@ exifdata
 
 @static
 fingerprint true
-prune true
-ignore
-  .eslintrc.js
 
 @plugins
-bucket-permissions
+enhance/arc-plugin-enhance
+enhance/arc-plugin-block-bots
+#bucket-permissions
