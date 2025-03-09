@@ -4,8 +4,9 @@ photos-filmaj-ca
 @aws
 region us-east-1
 
-# @events
-# s3upload
+@events
+s3upload
+  src app/infra/events/s3upload
 
 @tables
 exifdata
@@ -24,4 +25,5 @@ fingerprint true
 @plugins
 enhance/arc-plugin-enhance
 enhance/arc-plugin-block-bots
-#bucket-permissions
+bucket-permissions
+  src app/infra/plugins/bucket-permissions.mjs
