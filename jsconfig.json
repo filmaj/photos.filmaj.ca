@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "module": "commonJS",
-    "moduleResolution": "node",
-    "target": "es6",
+    "module": "nodenext",
     "baseUrl": ".",
     "paths": {
-      "@architect/shared/*": ["./src/shared/*"]
+      "@architect/shared/*": [
+        "./src/shared/*"
+      ]
     }
   },
-  "include": ["src/**/*"]
+  "include": [
+    "./app/**/*.mjs",
+    "./src/**/*.mjs"
+  ]
 }
