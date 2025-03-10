@@ -1,8 +1,9 @@
 @app
-photos-filmaj-ca
+photos-filmaj-test
 
 @aws
 region us-east-1
+runtime nodejs22.x
 
 @events
 s3upload
@@ -25,5 +26,5 @@ fingerprint true
 @plugins
 enhance/arc-plugin-enhance
 enhance/arc-plugin-block-bots
-bucket-permissions
-  src app/infra/plugins/bucket-permissions.mjs
+custom-infra
+  src app/infra/plugins/custom-infra.mjs
