@@ -8,8 +8,11 @@ export default {
   deploy: {
     start: function infra({ arc, cloudformation: cfn, stage }) {
       const imgBucket = getBucketName(arc.app, stage);
+      const appName = arc.app[0];
+      const comment = `${appName} (${stage})`;
       cfn.Resources.ImageBucket = {
         Type: 'AWS::S3::Bucket',
+        // topic policy needed as it gives S3 principal topic permissions
         DependsOn: ['S3uploadEventTopicPolicy', 'ArcImageBucketAccess'],
         Properties: {
           BucketName: imgBucket,
@@ -29,7 +32,7 @@ export default {
         Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity',
         Properties: {
           CloudFrontOriginAccessIdentityConfig: {
-            Comment: `OAI for ${imgBucket} bucket`,
+            Comment: `OAI for ${comment} image bucket`,
           },
         },
       };
@@ -61,9 +64,9 @@ export default {
       // Add permissions to our image bucket to our role
       cfn.Resources.ArcImageBucketAccess = {
         Type: 'AWS::IAM::Policy',
-        // DependsOn: ['ImageBucket'],
         Properties: {
           PolicyName: 'ImageBucketPolicy',
+          Description: `${comment} image bucket access`,
           PolicyDocument: {
             Statement: [
               {
@@ -97,6 +100,7 @@ export default {
                 },
                 Action: 'sns:Publish',
                 Resource: { Ref: s3upload },
+                Description: `Allows S3 to publish events to SNS for ${comment}`,
               },
             ],
           },
@@ -109,6 +113,7 @@ export default {
         DependsOn: ['HTTP', 'ImageBucket', 'CloudFrontOriginAccessIdentity'],
         Properties: {
           DistributionConfig: {
+            Comment: `${arc.app} Photography Site (${stage})`,
             Enabled: true,
             DefaultRootObject: 'index.html',
             HttpVersion: 'http2',
@@ -192,7 +197,7 @@ export default {
       };
       // Export the CloudFront URL
       cfn.Outputs.CloudFrontDistributionDomain = {
-        Description: 'CloudFront Distribution Domain Name',
+        Description: `${command} CDN`,
         Value: { 'Fn::GetAtt': ['CloudFrontDistribution', 'DomainName'] },
       };
       return cfn;
