@@ -10,6 +10,7 @@ export default {
       const imgBucket = getBucketName(arc.app, stage);
       cfn.Resources.ImageBucket = {
         Type: 'AWS::S3::Bucket',
+        DependsOn: ['S3uploadEventTopicPolicy', 'ArcImageBucketAccess'],
         Properties: {
           BucketName: imgBucket,
           // Set up event notifications to trigger the S3upload SNS topic
@@ -60,7 +61,7 @@ export default {
       // Add permissions to our image bucket to our role
       cfn.Resources.ArcImageBucketAccess = {
         Type: 'AWS::IAM::Policy',
-        DependsOn: ['ImageBucket'],
+        // DependsOn: ['ImageBucket'],
         Properties: {
           PolicyName: 'ImageBucketPolicy',
           PolicyDocument: {
@@ -85,7 +86,6 @@ export default {
       // add a SNS topic policy for the S3uploadEventTopic for events from our bucket
       cfn.Resources.S3uploadEventTopicPolicy = {
         Type: 'AWS::SNS::TopicPolicy',
-        DependsOn: ['Role', 'ImageBucket'],
         Properties: {
           PolicyDocument: {
             Version: '2012-10-17',
@@ -95,13 +95,8 @@ export default {
                 Principal: {
                   Service: 's3.amazonaws.com',
                 },
-                Action: ['sns:Publish'],
+                Action: 'sns:Publish',
                 Resource: { Ref: s3upload },
-                Condition: {
-                  ArnLike: {
-                    'aws:SourceArn': `arn:aws:s3:*:*:${imgBucket}`,
-                  },
-                },
               },
             ],
           },
@@ -125,7 +120,16 @@ export default {
               // API Gateway origin (default)
               {
                 Id: 'ApiGateway',
-                DomainName: { 'Fn::GetAtt': ['HTTP', 'ApiDomainName'] },
+                DomainName: {
+                  'Fn::Sub': [
+                    '${ApiId}.execute-api.${AWS::Region}.amazonaws.com',
+                    {
+                      ApiId: {
+                        Ref: 'HTTP',
+                      },
+                    },
+                  ],
+                },
                 CustomOriginConfig: {
                   HTTPPort: 80,
                   HTTPSPort: 443,
