@@ -108,7 +108,7 @@ export default {
         },
       };
       // Create CloudFront distribution with API Gateway and S3 bucket origins
-      cfn.Resources.CloudFrontDistribution = {
+      cfn.Resources.CDN = {
         Type: 'AWS::CloudFront::Distribution',
         DependsOn: ['HTTP', 'ImageBucket', 'CloudFrontOriginAccessIdentity'],
         Properties: {
@@ -196,7 +196,7 @@ export default {
         },
       };
       // Export the CloudFront URL
-      cfn.Outputs.CloudFrontDistributionDomain = {
+      cfn.Outputs.CDN = {
         Description: `${command} CDN`,
         Value: { 'Fn::GetAtt': ['CloudFrontDistribution', 'DomainName'] },
       };
@@ -206,7 +206,8 @@ export default {
       const isLocal = stage === 'testing';
       const bucketName = getBucketName(arc.app, stage);
       return {
-        ImageBucket: bucketName,
+        ImageBucket: isLocal ? bucketName : { Ref: 'ImageBucket' },
+        CDN: isLocal ? 'CDN' : { Ref: 'CDN' },
       };
     },
     end: async ({ cloudformation }) => { },
