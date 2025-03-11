@@ -3,6 +3,15 @@ const out = updater('Custom Infra');
 import { getBucketName } from './utils.mjs';
 // the @events S3upload SNS topic defined in app.arc
 const s3upload = 'S3uploadEventTopic';
+const defaultLocalOptions = {
+  port: 4569,
+  address: 'localhost',
+  directory: './buckets', // TODO maybe use os.tmpdir and clean up on shutdown?
+  accessKeyId: 'S3RVER',
+  secretAccessKey: 'S3RVER',
+  allowMismatchedSignatures: true,
+  resetOnClose: false,
+};
 
 export default {
   deploy: {
@@ -211,5 +220,21 @@ export default {
       };
     },
     end: async ({ cloudformation }) => { },
+  },
+  sandbox: {
+    start: async ({ arc, http }) => {
+      const bucketName = getBucketName(arc.app, 'testing');
+      http.get('/img/:id', (req, res) => {
+        out.status('got a custom http!');
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.end('yo\n');
+      });
+      const layer = http.stack.pop();
+      http.stack.unshift(layer);
+      console.log(http.stack[0]);
+      const s3rverOptions = { configureBuckets: [{ name: bucketName }], ...defaultLocalOptions };
+    },
+    end: async ({ arc, inventory, invoke }) => { },
   },
 };

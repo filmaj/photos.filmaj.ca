@@ -1,0 +1,33 @@
+diff --git a/node_modules/@architect/sandbox/src/http/index.js b/node_modules/@architect/sandbox/src/http/index.js
+index 733985b..612bec4 100644
+--- a/node_modules/@architect/sandbox/src/http/index.js
++++ b/node_modules/@architect/sandbox/src/http/index.js
+@@ -37,6 +37,7 @@ function start (params, callback) {
+   if (staticPath) params.staticPath = staticPath
+ 
+   middleware(app, params)
++  start.app = app
+ 
+   series([
+     // Generate public/static.json if `@static fingerprint` is enabled
+diff --git a/node_modules/@architect/sandbox/src/sandbox/plugins/index.js b/node_modules/@architect/sandbox/src/sandbox/plugins/index.js
+index 4590881..29be5b4 100644
+--- a/node_modules/@architect/sandbox/src/sandbox/plugins/index.js
++++ b/node_modules/@architect/sandbox/src/sandbox/plugins/index.js
+@@ -2,6 +2,7 @@ let { deepFrozenCopy } = require('@architect/utils')
+ let _invoke = require('../../invoke-lambda/_plugin')
+ let { userEnvVars } = require('../../lib')
+ let swapEnvVars = require('./swap-env-vars')
++let http = require('../../http')
+ 
+ module.exports = function sandboxStartPlugins (params, options, callback) {
+   let { inventory, update } = params
+@@ -19,7 +20,7 @@ module.exports = function sandboxStartPlugins (params, options, callback) {
+     let invoke = _invoke.bind({}, params)
+     let frozen = deepFrozenCopy(inventory)
+     let { arc } = frozen.inv._project
+-    let args = { arc, inventory: frozen, invoke }
++    let args = { arc, inventory: frozen, invoke, http: http.start.app }
+     async function runPlugins () {
+       for (let plugin of plugins) {
+         await plugin(args)

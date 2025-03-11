@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx enhance dev",
     "lint": "npx @biomejs/biome check --write ./app/**/*.mjs",
-    "test": "npm run lint"
+    "test": "npm run lint",
+    "postinstall": "patch-package"
   },
   "keywords": [
     "aws",
@@ -22,6 +23,7 @@
     "@biomejs/biome": "^1.9.4",
     "@enhance/cli": "^1.2.1",
     "@enhance/types": "^0.7.0",
+    "patch-package": "^8.0.0",
     "s3rver": "^3.7.1"
   },
   "repository": {
