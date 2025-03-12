@@ -24,6 +24,7 @@
     "@enhance/cli": "^1.2.1",
     "@enhance/types": "^0.7.0",
     "patch-package": "^8.0.0",
+    "rxjs": "^7.8.2",
     "s3rver": "^3.7.1"
   },
   "repository": {

@@ -1,17 +1,21 @@
 import { updater } from '@architect/utils';
-const out = updater('Custom Infra');
 import { getBucketName } from './utils.mjs';
+import S3rver from 's3rver';
+import { fromEvent } from 'rxjs';
+const out = updater('Custom Infra');
 // the @events S3upload SNS topic defined in app.arc
 const s3upload = 'S3uploadEventTopic';
 const defaultLocalOptions = {
   port: 4569,
   address: 'localhost',
-  directory: './buckets', // TODO maybe use os.tmpdir and clean up on shutdown?
+  directory: './buckets',
   accessKeyId: 'S3RVER',
   secretAccessKey: 'S3RVER',
   allowMismatchedSignatures: true,
   resetOnClose: false,
 };
+/** @type S3rver */
+let s3Instance;
 
 export default {
   deploy: {
@@ -222,19 +226,41 @@ export default {
     end: async ({ cloudformation }) => { },
   },
   sandbox: {
-    start: async ({ arc, http }) => {
+    start: async ({ arc, http, invoke }) => {
       const bucketName = getBucketName(arc.app, 'testing');
-      http.get('/img/:id', (req, res) => {
-        out.status('got a custom http!');
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-        res.end('yo\n');
+      http.get('/img/:img', (req, res) => {
+        res.statusCode = 301;
+        res.setHeader(
+          'Location',
+          `http://${defaultLocalOptions.address}:${defaultLocalOptions.port}/${bucketName}/${req.params.img}`,
+        );
+        res.end('\n');
       });
       const layer = http.stack.pop();
       http.stack.unshift(layer);
-      console.log(http.stack[0]);
-      const s3rverOptions = { configureBuckets: [{ name: bucketName }], ...defaultLocalOptions };
+      const s3rverOptions = {
+        configureBuckets: [
+          {
+            name: bucketName,
+            configs: [
+              '<WebsiteConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><IndexDocument><Suffix>index.html</Suffix></IndexDocument></WebsiteConfiguration>',
+            ],
+          },
+        ],
+        ...defaultLocalOptions,
+      };
+      s3Instance = new S3rver(s3rverOptions);
+      out.start('Starting up S3rver...');
+      await s3Instance.run();
+      const s3Events = fromEvent(s3Instance, 'event');
+      s3Events.subscribe((e) => {
+        console.log('s3 event', e);
+        // TODO: invoke event lambda
+      });
+      out.done('S3rver for S3 Image Bucket started.');
     },
-    end: async ({ arc, inventory, invoke }) => { },
+    end: async ({ arc, inventory, invoke }) => {
+      await s3Instance.close();
+    },
   },
 };
