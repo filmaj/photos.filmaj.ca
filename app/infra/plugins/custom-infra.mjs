@@ -254,8 +254,11 @@ export default {
       await s3Instance.run();
       const s3Events = fromEvent(s3Instance, 'event');
       s3Events.subscribe((e) => {
-        console.log('s3 event', e);
-        // TODO: invoke event lambda
+        const payload = {
+          // That's right, to invoke an @event, stringify the record and wrap it around with Sns/Message :/
+          Records: e.Records.map((r) => ({ Sns: { Message: JSON.stringify(r) } })),
+        };
+        invoke({ pragma: 'events', name: 's3upload', payload });
       });
       out.done('S3rver for S3 Image Bucket started.');
     },

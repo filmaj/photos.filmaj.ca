@@ -10,9 +10,10 @@ let sharp = require('/opt/node_modules/sharp');
 let exifreader = require('exifreader');
 let s3 = new aws.S3();
 */
+import arc from '@architect/functions';
 
 export const handler = arc.events.subscribe(async function s3Event(event) {
-  console.log(JSON.stringify(event, null, 2));
+  console.log('s3 event handler', JSON.stringify(event, null, 2));
   /*
   if (!event.Records || !event.Records.length) return;
   let tables = await arc.tables();
