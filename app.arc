@@ -1,19 +1,13 @@
 @app
-photos-filmaj-ca
+photos-filmaj-test
 
 @aws
-profile default
 region us-east-1
-memory 128
-
-@http
-get /
-get /:album
-get /:album/*
-get /api/randoimg
+runtime nodejs22.x
 
 @events
 s3upload
+  src app/infra/events/s3upload
 
 @tables
 exifdata
@@ -28,9 +22,9 @@ exifdata
 
 @static
 fingerprint true
-prune true
-ignore
-  .eslintrc.js
 
 @plugins
-bucket-permissions
+enhance/arc-plugin-enhance
+enhance/arc-plugin-block-bots
+custom-infra
+  src app/infra/plugins/custom-infra.mjs

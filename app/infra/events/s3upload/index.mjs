@@ -1,3 +1,4 @@
+/*
 let { StringDecoder } = require('string_decoder');
 let imageUtils = require('@architect/shared/image-utils');
 let utf16decoder = new StringDecoder('utf16le');
@@ -8,9 +9,12 @@ let aws = require('aws-sdk');
 let sharp = require('/opt/node_modules/sharp');
 let exifreader = require('exifreader');
 let s3 = new aws.S3();
+*/
+import arc from '@architect/functions';
 
-exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(event) {
-  console.log(JSON.stringify(event, null, 2));
+export const handler = arc.events.subscribe(async function s3Event(event) {
+  console.log('s3 event handler', JSON.stringify(event, null, 2));
+  /*
   if (!event.Records || !event.Records.length) return;
   let tables = await arc.tables();
   let exifDB = tables.exifdata;
@@ -57,38 +61,54 @@ exports.handler = arc.events.subscribe(async function somethingWasUploadedToS3(e
         tileResizeOptions.height = imageUtils.MAX_TILE_SIZE;
       }
       let thumbnail = sharp(imageData).resize(thumbResizeOptions).png();
-      res = await s3.putObject({
-        Bucket,
-        Key: newThumbKey,
-        ContentType: 'image/png',
-        CacheControl: 'public, max-age=157680000',
-        Body: await thumbnail.toBuffer()
-      }).promise();
+      res = await s3
+        .putObject({
+          Bucket,
+          Key: newThumbKey,
+          ContentType: 'image/png',
+          CacheControl: 'public, max-age=157680000',
+          Body: await thumbnail.toBuffer(),
+        })
+        .promise();
       console.log('Saved', newThumbKey, `to S3 (ETag: ${res.ETag})`);
       let tile = sharp(imageData).resize(tileResizeOptions).png();
-      res = await s3.putObject({
-        Bucket,
-        Key: newTileKey,
-        ContentType: 'image/png',
-        CacheControl: 'public, max-age=157680000',
-        Body: await tile.toBuffer()
-      }).promise();
+      res = await s3
+        .putObject({
+          Bucket,
+          Key: newTileKey,
+          ContentType: 'image/png',
+          CacheControl: 'public, max-age=157680000',
+          Body: await tile.toBuffer(),
+        })
+        .promise();
       console.log('Saved', newTileKey, `to S3 (ETag: ${res.ETag})`);
       let square = sharp(imageData).resize(squareResizeOptions).png();
-      res = await s3.putObject({
-        Bucket,
-        Key: newSquareKey,
-        ContentType: 'image/png',
-        CacheControl: 'public, max-age=157680000',
-        Body: await square.toBuffer()
-      }).promise();
+      res = await s3
+        .putObject({
+          Bucket,
+          Key: newSquareKey,
+          ContentType: 'image/png',
+          CacheControl: 'public, max-age=157680000',
+          Body: await square.toBuffer(),
+        })
+        .promise();
       console.log('Saved', newSquareKey, `to S3 (ETag: ${res.ETag})`);
     }
   }
+  */
 });
+/*
 function extractTags(t) {
   let artist = cleanTag(t.Artist);
-  let date = cleanTag(t.DateCreated ? t.DateCreated : (t.CreateDate ? t.CreateDate : (t.DateTimeOriginal ? t.DateTimeOriginal : t.DateTime)));
+  let date = cleanTag(
+    t.DateCreated
+      ? t.DateCreated
+      : t.CreateDate
+        ? t.CreateDate
+        : t.DateTimeOriginal
+          ? t.DateTimeOriginal
+          : t.DateTime,
+  );
   let model = cleanTag(t.Model);
   let iso = cleanTag(t.ISOSpeedRatings);
   let focalLength = cleanTag(t.FocalLength);
@@ -111,11 +131,24 @@ function extractTags(t) {
   let GPSLatitudeRef = rawTag(t.GPSLatitudeRef);
   let GPSLongitudeRef = rawTag(t.GPSLongitudeRef);
   let width = cleanTag(t['Image Width']);
-  let height= cleanTag(t['Image Height']);
+  let height = cleanTag(t['Image Height']);
   return {
-    views: 0, key: '', album: '', filename: '', width, height,
-    artist, date, model, iso, focalLength, fNumber, exposure, lens, comment,
-    raw: { GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef }
+    views: 0,
+    key: '',
+    album: '',
+    filename: '',
+    width,
+    height,
+    artist,
+    date,
+    model,
+    iso,
+    focalLength,
+    fNumber,
+    exposure,
+    lens,
+    comment,
+    raw: { GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef },
   };
 }
 function cleanTag(t) {
@@ -127,3 +160,4 @@ function rawTag(t) {
   if (t && t.id) delete t.id;
   return t;
 }
+*/
